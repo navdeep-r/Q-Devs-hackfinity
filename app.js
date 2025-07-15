@@ -3,6 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
+const { analyzeRepo } = require('./utils/analyserepo');
 require('dotenv').config();
 
 const app = express();
@@ -58,6 +59,19 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 const HOST = process.env.HOST || 'localhost';
 
+
+
 app.listen(PORT, HOST, () => {
     console.log(`Server running at ${`http://${HOST}:${PORT}`}`);
+
+    //Playground
+    (async () => {
+        const localRepoPath = './cloned_repos/repo_1752582222156'
+        const analysis = await analyzeRepo(localRepoPath);
+
+        console.log('--- Repo Analysis Result ---');
+        console.log(JSON.stringify(analysis, null, 2));
+    })()
+    //Playground
+
 });
