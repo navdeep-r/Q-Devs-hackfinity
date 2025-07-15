@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
@@ -15,20 +16,15 @@ app.use(
     })
 );
 
-// Initialize Passport
+// Passport init
 app.use(passport.initialize());
 app.use(passport.session());
 
 // Passport config
-passport.serializeUser((user, done) => {
-    done(null, user);
-});
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
 
-passport.deserializeUser((obj, done) => {
-    done(null, obj);
-});
-
-// GitHub OAuth Strategy
+// GitHub Strategy
 passport.use(
     new GitHubStrategy(
         {
@@ -37,55 +33,24 @@ passport.use(
             callbackURL: process.env.GITHUB_CALLBACK_URL,
         },
         (accessToken, refreshToken, profile, done) => {
-            // You might store tokens or profile here
             return done(null, profile);
         }
     )
 );
 
-// Home Route
+// Mount authentication router on /api/auth
+const authRouter = require('./routes/auth');
+app.use('/api/auth', authRouter);
+
+// Health check route
 app.get('/', (req, res) => {
-    res.send('<h2>DockZen - GitHub OAuth Example</h2><a href="/auth/github">Login with GitHub</a>');
+    res.json({ status: 'API is running' });
 });
 
-// Login Route
-app.get('/auth/github', passport.authenticate('github', { scope: ['repo'] }));
-
-// Callback Route
-app.get(
-    '/auth/github/callback',
-    passport.authenticate('github', { failureRedirect: '/' }),
-    (req, res) => {
-        res.redirect('/profile');
-    }
-);
-
-// Profile Route
-app.get('/profile', (req, res) => {
-    if (!req.isAuthenticated()) {
-        // Early exit for unauthenticated users
-        return res.redirect('/');
-    }
-
-    // This block only runs if authenticated
-    res.send(`
-    <h2>Welcome, ${req.user.username}</h2>
-    <img src="${req.user.photos[0].value}" alt="Avatar" />
-    <p><a href="/logout">Logout</a></p>
-  `);
-});
-
-// Logout Route
-app.get('/logout', (req, res) => {
-    req.logout(err => {
-        if (err) {
-            // Handle error (optional)
-            return res.status(500).send('Error logging out.');
-        }
-        res.redirect('/');
-    });
-});
-
-// Start Server
+// Start server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const HOST = process.env.HOST || 'localhost';
+
+app.listen(PORT, HOST, () => {
+    console.log(`Server running at ${process.env.BACKEND_URL || `http://${HOST}:${PORT}`}`);
+});
