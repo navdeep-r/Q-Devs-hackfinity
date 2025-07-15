@@ -67,6 +67,7 @@ Based on the above files, produce a README.md with:
 - Installation
 - Usage
 - Development
+- Folder Layout
 - Testing
 - Docker (if applicable)
 - Configuration
@@ -83,11 +84,11 @@ Return only the README.md in your response.`;
         // console.log(userPrompt);
 
         // Step 5: Call Together AI
-        const finalReadme = await callTogether(systemPrompt, userPrompt);
+        const readme = await callTogether(systemPrompt, userPrompt);
 
         // Uncomment to inspect README
         console.log("=== Generated README ===");
-        console.log(finalReadme);
+        console.log(readme);
 
         // Step 6: Respond
         res.json({
@@ -95,7 +96,7 @@ Return only the README.md in your response.`;
             localPath,
             analysis,
             fileContents,
-            finalReadme
+            readme
         });
     } catch (err) {
         console.error("Error during cloning and analysis:", err);

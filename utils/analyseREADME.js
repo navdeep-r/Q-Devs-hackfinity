@@ -83,10 +83,6 @@
 const fs = require("fs").promises;
 const path = require("path");
 
-// utils/analyzeRepo.js
-const fs = require("fs").promises;
-const path = require("path");
-
 async function walkDir(dir, baseDir = "", pattern = null) {
     const results = [];
     const ignoredDirs = new Set([".git", "node_modules", ".next", ".cache", "venv", "__pycache__", "dist", "build"]);
