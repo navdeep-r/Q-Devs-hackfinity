@@ -34,6 +34,17 @@ router.post("/clone", async (req, res) => {
             }
         }
 
+        // Additionally, if it's a Node app and has an entry point:
+        if (analysis.language === "Node.js" && analysis.entryPoint) {
+            const entryPath = path.join(localPath, analysis.entryPoint);
+            try {
+                const entryContent = await fs.readFile(entryPath, "utf-8");
+                fileContents[analysis.entryPoint] = entryContent;
+            } catch (err) {
+                fileContents[analysis.entryPoint] = `Error reading entry point: ${err.message}`;
+            }
+        }
+
         // Uncomment to see all collected file contents
         // console.log("=== File Contents ===");
         // console.log(fileContents);

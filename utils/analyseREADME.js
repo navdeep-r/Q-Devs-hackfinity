@@ -83,27 +83,17 @@
 const fs = require("fs").promises;
 const path = require("path");
 
+// utils/analyzeRepo.js
+const fs = require("fs").promises;
+const path = require("path");
+
 async function walkDir(dir, baseDir = "", pattern = null) {
     const results = [];
-
-    const ignoredDirs = new Set([
-        ".git",
-        "node_modules",
-        ".next",
-        ".cache",
-        "venv",
-        "__pycache__",
-        "dist",
-        "build"
-    ]);
-
+    const ignoredDirs = new Set([".git", "node_modules", ".next", ".cache", "venv", "__pycache__", "dist", "build"]);
     const entries = await fs.readdir(dir, { withFileTypes: true });
 
     for (const entry of entries) {
-        if (ignoredDirs.has(entry.name)) {
-            continue; // skip this folder and its children
-        }
-
+        if (ignoredDirs.has(entry.name)) continue;
         const fullPath = path.join(dir, entry.name);
         const relPath = path.join(baseDir, entry.name);
 
@@ -111,35 +101,12 @@ async function walkDir(dir, baseDir = "", pattern = null) {
             const subResults = await walkDir(fullPath, relPath, pattern);
             results.push(...subResults);
         } else {
-            if (pattern && pattern.test(entry.name.split('/').at(-1))) continue;
-            //     const stat = await fs.stat(fullPath);
-
-            // Determine file type based on extension
-            // const ext = path.extname(entry.name).toLowerCase();
-            // let type = "unknown";
-            // if (ext === ".js") type = "javascript";
-            // else if (ext === ".ts") type = "typescript";
-            // else if (ext === ".py") type = "python";
-            // else if (ext === ".json") type = "json";
-            // else if (ext === ".yml" || ext === ".yaml") type = "yaml";
-            // else if (ext === ".md") type = "markdown";
-            // else if (ext === ".dockerfile" || entry.name.toLowerCase() === "dockerfile") type = "dockerfile";
-            // else if (ext === ".sh") type = "shell";
-            // else if (ext === ".html") type = "html";
-            // else if (ext === ".css") type = "css";
-            // else if (ext === ".txt") type = "text";
-
-            results.push({
-                path: relPath,   // e.g. "src/app.js"
-                // size: stat.size,
-                // type: type
-            });
+            if (pattern && pattern.test(entry.name)) continue;
+            results.push({ path: relPath });
         }
     }
-
     return results;
 }
-
 
 async function analyzeRepo(localPath) {
     const result = {
@@ -149,13 +116,14 @@ async function analyzeRepo(localPath) {
         hasDockerfile: false,
         hasReadme: false,
         startScript: null,
+        entryPoint: null, // ADD THIS
         dependencies: [],
         suggestions: [],
-        files: [], // New
+        files: [],
     };
 
     try {
-        // Collect all files recursively
+        // Collect all files
         result.files = await walkDir(localPath, "", /^(package\.json|.*\.md)$/);
 
         // Check for package.json
@@ -166,13 +134,14 @@ async function analyzeRepo(localPath) {
             result.hasPackageJson = true;
             result.language = "Node.js";
             result.startScript = pkgJson.scripts?.start || null;
+            result.entryPoint = pkgJson.main || "index.js"; // Default to index.js
             result.dependencies = Object.keys(pkgJson.dependencies || {});
 
             if (!result.startScript) {
                 result.suggestions.push('Consider adding a "start" script to package.json.');
             }
         } catch {
-            // Not Node.js or no package.json
+            // No package.json or invalid
         }
 
         // requirements.txt
@@ -211,8 +180,6 @@ async function analyzeRepo(localPath) {
         console.error("Error analyzing repository:", error);
         throw error;
     }
-
-    console.log(result)
 
     return result;
 }
