@@ -38,6 +38,7 @@ router.get('/profile', (req, res) => {
     res.json({
         username: req.user.username,
         avatar: req.user.photos[0].value,
+        accessToken: req.user.accessToken,
     });
 });
 

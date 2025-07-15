@@ -6,6 +6,7 @@ const GitHubStrategy = require('passport-github2').Strategy;
 require('dotenv').config();
 
 const app = express();
+app.use(express.json());
 
 // Session setup
 app.use(
@@ -43,6 +44,10 @@ passport.use(
 // Mount authentication router on /api/auth
 const authRouter = require('./routes/auth');
 app.use('/api/auth', authRouter);
+
+// Mount cloning router on /api/repos
+const reposRouter = require('./routes/repos');
+app.use('/api/repos', reposRouter);
 
 // Health check route
 app.get('/', (req, res) => {
