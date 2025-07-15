@@ -96,7 +96,8 @@ Return only the README.md in your response.`;
             localPath,
             analysis,
             fileContents,
-            readme
+            readme,
+            dependancies: {}
         });
     } catch (err) {
         console.error("Error during cloning and analysis:", err);

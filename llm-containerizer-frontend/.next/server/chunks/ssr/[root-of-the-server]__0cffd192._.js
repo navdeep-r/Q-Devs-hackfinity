@@ -44,7 +44,14 @@ const ContainerizationTool = ()=>{
     const [showResults, setShowResults] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [activeTab, setActiveTab] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("dockerfile");
     const [processingStep, setProcessingStep] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
-    const [readmeGenerated, setReadmeGenerated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [dockerfileContent, setDockerfileContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const [configContent, setConfigContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const [readmeContent, setReadmeContent] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])("");
+    const [techStack, setTechstack] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [security, setSecurity] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [development, setDevelopement] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    const [runtime, setRuntime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
+    //   const [logsContent, setLogsContent] = useState("");
     const processingSteps = [
         "Cloning repository...",
         "Analyzing code structure...",
@@ -74,14 +81,44 @@ const ContainerizationTool = ()=>{
         setIsProcessing(true);
         setProcessingStep(0);
         setShowResults(false);
-        setReadmeGenerated(false);
-        for(let i = 0; i < processingSteps.length; i++){
-            setProcessingStep(i);
-            if (i === 6) setReadmeGenerated(true);
-            await new Promise((resolve)=>setTimeout(resolve, 1000));
+        setReadmeContent("");
+        try {
+            setProcessingStep(1);
+            const response = await fetch("http://localhost:5000/api/repos/clone", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    repoUrl
+                })
+            });
+            //   const text = await response.json();
+            //   alert(`Raw response text:${typeof text}`);
+            //   if (!response.ok) {
+            //     throw new Error(
+            //       "Server error while cloning and analyzing the repository."
+            //     );
+            //   }
+            const data = await response.json();
+            setProcessingStep(processingSteps.length - 1); // Complete
+            // Store analysis results in state
+            setReadmeContent(data.readme || "");
+            setTechstack(data.dependencies || []);
+            setDockerfileContent(data.dockerFile || "");
+            setConfigContent(data.analysis.config || "");
+            //   setLogsContent(data.analysis.logs || "");
+            alert("i");
+            //   setSecurity(data.dependencies.security || []);
+            //   setDevelopement(data.dependencies.development || []);
+            //   setRuntime(data.dependencies.runtime || []);
+            setShowResults(true);
+        } catch (err) {
+            console.error(err);
+            alert("Failed to process repository. Check console for details.");
+        } finally{
+            setIsProcessing(false);
         }
-        setIsProcessing(false);
-        setShowResults(true);
     };
     const copyToClipboard = (text)=>{
         navigator.clipboard.writeText(text);
@@ -100,85 +137,35 @@ const ContainerizationTool = ()=>{
         document.body.removeChild(link);
         URL.revokeObjectURL(link.href);
     };
-    const mockDockerfile = `FROM node:18-alpine
-
-WORKDIR /app
-
-COPY package*.json ./
-RUN npm ci --only=production
-
-COPY . .
-
-EXPOSE 3000
-
-USER node
-
-CMD ["npm", "start"]`;
-    const mockConfig = `{
-  "name": "my-app-container",
-  "ports": ["3000:3000"],
-  "environment": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
-  },
-  "healthcheck": {
-    "test": ["CMD", "curl", "-f", "http://localhost:3000/health"],
-    "interval": "30s",
-    "timeout": "10s",
-    "retries": 3
-  },
-  "restart": "unless-stopped"
-}`;
-    const mockDependencies = {
-        "runtime": [
-            "react@18.2.0",
-            "express@4.18.2",
-            "lodash@4.17.21"
-        ],
-        "development": [
-            "webpack@5.88.0",
-            "babel@7.22.0",
-            "jest@29.5.0"
-        ],
-        "security": [
-            "0 vulnerabilities found",
-            "All dependencies up to date"
-        ],
-        "techStack": [
-            "Node.js",
-            "React",
-            "Express.js",
-            "JavaScript"
-        ]
-    };
-    const mockReadme = `# My Awesome Project
-
-## Overview
-This is a modern Node.js application built with React and Express.js. The application provides a robust web interface with server-side rendering capabilities.
-
-## Features
-- Modern React frontend
-- Express.js backend API
-- Real-time data processing
-- Responsive design
-- Security-first approach
-
-## Installation
-\`\`\`bash
-npm install
-npm start
-\`\`\`
-
-## API Endpoints
-- GET /api/health - Health check
-- GET /api/data - Fetch application data
-- POST /api/users - Create new user
-
-## Contributing
-Please read CONTRIBUTING.md for contribution guidelines.
-
-## License
-MIT License - see LICENSE file for details.`;
+    //   const dockerfileContent = `FROM node:18-alpine
+    // WORKDIR /app
+    // COPY package*.json ./
+    // RUN npm ci --only=production
+    // COPY . .
+    // EXPOSE 3000
+    // USER node
+    // CMD ["npm", "start"]`;
+    //   const mockConfig = `{
+    //   "name": "my-app-container",
+    //   "ports": ["3000:3000"],
+    //   "environment": {
+    //     "NODE_ENV": "production",
+    //     "PORT": "3000"
+    //   },
+    //   "healthcheck": {
+    //     "test": ["CMD", "curl", "-f", "http://localhost:3000/health"],
+    //     "interval": "30s",
+    //     "timeout": "10s",
+    //     "retries": 3
+    //   },
+    //   "restart": "unless-stopped"
+    // }`;
+    //   const dependencies = {
+    //     runtime: ["react@18.2.0", "express@4.18.2", "lodash@4.17.21"],
+    //     development: ["webpack@5.88.0", "babel@7.22.0", "jest@29.5.0"],
+    //     security: ["0 vulnerabilities found", "All dependencies up to date"],
+    //   techStack: ["Node.js", "React", "Express.js", "JavaScript"],
+    //   };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen bg-black text-white",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -196,12 +183,12 @@ MIT License - see LICENSE file for details.`;
                                         className: "h-8 w-8 text-white"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 167,
+                                        lineNumber: 176,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 166,
+                                    lineNumber: 175,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -209,13 +196,13 @@ MIT License - see LICENSE file for details.`;
                                     children: "DockZen"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 169,
+                                    lineNumber: 178,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 165,
+                            lineNumber: 174,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -223,13 +210,13 @@ MIT License - see LICENSE file for details.`;
                             children: "Transform your GitHub repositories into production-ready containers with AI-powered analysis and README generation"
                         }, void 0, false, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 171,
+                            lineNumber: 180,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 164,
+                    lineNumber: 173,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -245,7 +232,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-blue-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 180,
+                                            lineNumber: 190,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -253,13 +240,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "Smart Code Analysis"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 181,
+                                            lineNumber: 191,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 179,
+                                    lineNumber: 189,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -267,13 +254,13 @@ MIT License - see LICENSE file for details.`;
                                     children: "Deep dive into your codebase to understand structure, dependencies, and optimal containerization strategy"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 183,
+                                    lineNumber: 193,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 178,
+                            lineNumber: 188,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -286,7 +273,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-green-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 189,
+                                            lineNumber: 200,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -294,13 +281,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "AI-Powered Documentation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 190,
+                                            lineNumber: 201,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 188,
+                                    lineNumber: 199,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -308,19 +295,19 @@ MIT License - see LICENSE file for details.`;
                                     children: "Generate comprehensive README files using LLM analysis, stored in database for future access"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 192,
+                                    lineNumber: 205,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 187,
+                            lineNumber: 198,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 177,
+                    lineNumber: 187,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -333,7 +320,7 @@ MIT License - see LICENSE file for details.`;
                                     className: "h-6 w-6 text-white"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 201,
+                                    lineNumber: 215,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -341,13 +328,13 @@ MIT License - see LICENSE file for details.`;
                                     children: "Repository Analysis"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 202,
+                                    lineNumber: 216,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 200,
+                            lineNumber: 214,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -360,7 +347,7 @@ MIT License - see LICENSE file for details.`;
                                             children: "GitHub Repository URL"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 206,
+                                            lineNumber: 220,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -374,7 +361,7 @@ MIT License - see LICENSE file for details.`;
                                                     className: `w-full px-4 py-3 bg-black border-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${!isValidUrl ? "border-red-500" : "border-gray-700"}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 210,
+                                                    lineNumber: 224,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 repoUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -383,24 +370,24 @@ MIT License - see LICENSE file for details.`;
                                                         className: "h-5 w-5 text-green-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                        lineNumber: 220,
+                                                        lineNumber: 236,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
                                                         className: "h-5 w-5 text-red-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                        lineNumber: 222,
+                                                        lineNumber: 238,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 218,
+                                                    lineNumber: 234,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 209,
+                                            lineNumber: 223,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         !isValidUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -408,13 +395,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "Please enter a valid GitHub repository URL"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 228,
+                                            lineNumber: 244,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 205,
+                                    lineNumber: 219,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -428,37 +415,37 @@ MIT License - see LICENSE file for details.`;
                                                 className: "w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 240,
+                                                lineNumber: 256,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
                                                 className: "h-5 w-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 242,
+                                                lineNumber: 258,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             isProcessing ? "Analyzing..." : "Start Analysis"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 234,
+                                        lineNumber: 250,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 233,
+                                    lineNumber: 249,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 204,
+                            lineNumber: 218,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 199,
+                    lineNumber: 213,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 isProcessing && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -471,7 +458,7 @@ MIT License - see LICENSE file for details.`;
                                     className: "w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 254,
+                                    lineNumber: 270,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -479,13 +466,13 @@ MIT License - see LICENSE file for details.`;
                                     children: "Processing Repository..."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 255,
+                                    lineNumber: 271,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 253,
+                            lineNumber: 269,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -497,19 +484,19 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 270,
+                                            lineNumber: 288,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)) : index === processingStep ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 272,
+                                            lineNumber: 290,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "h-4 w-4 rounded-full border-2 border-gray-600"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 274,
+                                            lineNumber: 292,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -517,24 +504,24 @@ MIT License - see LICENSE file for details.`;
                                             children: step
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 276,
+                                            lineNumber: 294,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, index, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 259,
+                                    lineNumber: 277,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 257,
+                            lineNumber: 275,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 252,
+                    lineNumber: 268,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)),
                 showResults && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -550,7 +537,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-blue-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 290,
+                                            lineNumber: 307,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -558,13 +545,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "Dockerfile Generation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 291,
+                                            lineNumber: 308,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 289,
+                                    lineNumber: 306,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -578,84 +565,84 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Generated Dockerfile"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 295,
+                                                    lineNumber: 312,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "flex gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>copyToClipboard(mockDockerfile),
+                                                            onClick: ()=>copyToClipboard(dockerfileContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 301,
+                                                                    lineNumber: 320,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 297,
+                                                            lineNumber: 316,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>downloadFile("Dockerfile", mockDockerfile),
+                                                            onClick: ()=>downloadFile("Dockerfile", dockerfileContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$download$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Download$3e$__["Download"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 308,
+                                                                    lineNumber: 329,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 304,
+                                                            lineNumber: 323,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 296,
+                                                    lineNumber: 315,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 294,
+                                            lineNumber: 311,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
                                             className: "text-gray-300 text-sm overflow-x-auto",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                                                children: mockDockerfile
+                                                children: dockerfileContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 314,
+                                                lineNumber: 335,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 313,
+                                            lineNumber: 334,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 293,
+                                    lineNumber: 310,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 288,
+                            lineNumber: 305,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -668,7 +655,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-green-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 322,
+                                            lineNumber: 343,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -676,13 +663,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "Configuration Files"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 323,
+                                            lineNumber: 344,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 321,
+                                    lineNumber: 342,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -696,78 +683,78 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Container Configuration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 327,
+                                                    lineNumber: 348,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "flex gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>copyToClipboard(mockConfig),
+                                                            onClick: ()=>copyToClipboard(configContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 333,
+                                                                    lineNumber: 356,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 329,
+                                                            lineNumber: 352,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>downloadFile("container-config.json", mockConfig),
+                                                            onClick: ()=>downloadFile("container-config.json", configContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$download$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Download$3e$__["Download"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 340,
+                                                                    lineNumber: 365,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 336,
+                                                            lineNumber: 359,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 328,
+                                                    lineNumber: 351,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 326,
+                                            lineNumber: 347,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
                                             className: "text-gray-300 text-sm overflow-x-auto",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                                                children: mockConfig
+                                                children: configContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 346,
+                                                lineNumber: 371,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 345,
+                                            lineNumber: 370,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 325,
+                                    lineNumber: 346,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -781,7 +768,7 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Port Configuration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 351,
+                                                    lineNumber: 376,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -789,7 +776,7 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Exposed: 3000"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 352,
+                                                    lineNumber: 379,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -797,13 +784,13 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Protocol: HTTP"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 353,
+                                                    lineNumber: 380,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 350,
+                                            lineNumber: 375,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -814,7 +801,7 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Environment"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 356,
+                                                    lineNumber: 383,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -822,7 +809,7 @@ MIT License - see LICENSE file for details.`;
                                                     children: "NODE_ENV: production"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 357,
+                                                    lineNumber: 386,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -830,25 +817,25 @@ MIT License - see LICENSE file for details.`;
                                                     children: "PORT: 3000"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 358,
+                                                    lineNumber: 387,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 355,
+                                            lineNumber: 382,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 349,
+                                    lineNumber: 374,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 320,
+                            lineNumber: 341,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -861,7 +848,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-yellow-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 366,
+                                            lineNumber: 395,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -869,13 +856,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "Dependency Analysis"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 367,
+                                            lineNumber: 396,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 365,
+                                    lineNumber: 394,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -889,19 +876,19 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Tech Stack Detected"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 371,
+                                                    lineNumber: 400,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "space-y-2",
-                                                    children: mockDependencies.techStack.map((tech, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    children: techStack.map((tech, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "flex items-center gap-2",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$zap$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Zap$3e$__["Zap"], {
                                                                     className: "h-4 w-4 text-yellow-400"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 375,
+                                                                    lineNumber: 406,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -909,24 +896,24 @@ MIT License - see LICENSE file for details.`;
                                                                     children: tech
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 376,
+                                                                    lineNumber: 407,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, index, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 374,
+                                                            lineNumber: 405,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 372,
+                                                    lineNumber: 403,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 370,
+                                            lineNumber: 399,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -937,19 +924,19 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Security Analysis"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 382,
+                                                    lineNumber: 413,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "space-y-2",
-                                                    children: mockDependencies.security.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    children: security.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "flex items-center gap-2",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
                                                                     className: "h-4 w-4 text-green-400"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 386,
+                                                                    lineNumber: 419,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -957,30 +944,30 @@ MIT License - see LICENSE file for details.`;
                                                                     children: item
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 387,
+                                                                    lineNumber: 420,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, index, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 385,
+                                                            lineNumber: 418,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 383,
+                                                    lineNumber: 416,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 381,
+                                            lineNumber: 412,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 369,
+                                    lineNumber: 398,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -991,7 +978,7 @@ MIT License - see LICENSE file for details.`;
                                             children: "Dependencies Overview"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 394,
+                                            lineNumber: 427,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1004,30 +991,30 @@ MIT License - see LICENSE file for details.`;
                                                             children: "Runtime Dependencies"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 397,
+                                                            lineNumber: 432,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
                                                             className: "text-gray-300 text-sm space-y-1",
-                                                            children: mockDependencies.runtime.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                            children: runtime.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
                                                                     children: [
                                                                         "• ",
                                                                         dep
                                                                     ]
                                                                 }, index, true, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 400,
+                                                                    lineNumber: 437,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 398,
+                                                            lineNumber: 435,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 396,
+                                                    lineNumber: 431,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1037,48 +1024,48 @@ MIT License - see LICENSE file for details.`;
                                                             children: "Development Dependencies"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 405,
+                                                            lineNumber: 442,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
                                                             className: "text-gray-300 text-sm space-y-1",
-                                                            children: mockDependencies.development.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
+                                                            children: development.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
                                                                     children: [
                                                                         "• ",
                                                                         dep
                                                                     ]
                                                                 }, index, true, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 408,
+                                                                    lineNumber: 447,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)))
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 406,
+                                                            lineNumber: 445,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 404,
+                                                    lineNumber: 441,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 395,
+                                            lineNumber: 430,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 393,
+                                    lineNumber: 426,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 364,
+                            lineNumber: 393,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1091,7 +1078,7 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-6 w-6 text-purple-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 419,
+                                            lineNumber: 458,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1099,30 +1086,30 @@ MIT License - see LICENSE file for details.`;
                                             children: "AI-Generated README"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 420,
+                                            lineNumber: 459,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
-                                        readmeGenerated && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                        readmeContent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "ml-auto flex items-center gap-2 px-3 py-1 bg-green-500 bg-opacity-20 text-green-400 rounded-full text-sm",
                                             children: [
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$database$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Database$3e$__["Database"], {
                                                     className: "h-4 w-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 423,
+                                                    lineNumber: 462,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 "Stored in Database"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 422,
+                                            lineNumber: 461,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 418,
+                                    lineNumber: 457,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1135,7 +1122,7 @@ MIT License - see LICENSE file for details.`;
                                                     className: "h-5 w-5 text-blue-400"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 431,
+                                                    lineNumber: 470,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1143,13 +1130,13 @@ MIT License - see LICENSE file for details.`;
                                                     children: "LLM Database Integration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 432,
+                                                    lineNumber: 471,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 430,
+                                            lineNumber: 469,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1157,13 +1144,13 @@ MIT License - see LICENSE file for details.`;
                                             children: "README generated using advanced language models and automatically stored in our database for version control and future access."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 434,
+                                            lineNumber: 475,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 429,
+                                    lineNumber: 468,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1177,84 +1164,84 @@ MIT License - see LICENSE file for details.`;
                                                     children: "Generated README.md"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 441,
+                                                    lineNumber: 484,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "flex gap-2",
                                                     children: [
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>copyToClipboard(mockReadme),
+                                                            onClick: ()=>copyToClipboard(readmeContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-blue-500 hover:bg-blue-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 447,
+                                                                    lineNumber: 490,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 443,
+                                                            lineNumber: 486,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                                            onClick: ()=>downloadFile("README.md", mockReadme),
+                                                            onClick: ()=>downloadFile("README.md", readmeContent),
                                                             className: "flex items-center gap-1 px-3 py-1 bg-green-500 hover:bg-green-600 rounded text-white text-sm",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$download$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Download$3e$__["Download"], {
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 454,
+                                                                    lineNumber: 497,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 450,
+                                                            lineNumber: 493,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 442,
+                                                    lineNumber: 485,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 440,
+                                            lineNumber: 483,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
                                             className: "text-gray-300 text-sm overflow-x-auto whitespace-pre-wrap",
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("code", {
-                                                children: mockReadme
+                                                children: readmeContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 460,
+                                                lineNumber: 503,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 459,
+                                            lineNumber: 502,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 439,
+                                    lineNumber: 482,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 417,
+                            lineNumber: 456,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1265,7 +1252,7 @@ MIT License - see LICENSE file for details.`;
                                     children: "Next Steps"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 467,
+                                    lineNumber: 510,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1278,14 +1265,14 @@ MIT License - see LICENSE file for details.`;
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 470,
+                                                    lineNumber: 513,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 "Deploy to Cloud"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 469,
+                                            lineNumber: 512,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1295,31 +1282,31 @@ MIT License - see LICENSE file for details.`;
                                                     className: "h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 474,
+                                                    lineNumber: 517,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 "Test Locally"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 473,
+                                            lineNumber: 516,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 468,
+                                    lineNumber: 511,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
-                                    onClick: ()=>window.open('/details', '_blank'),
+                                    onClick: ()=>window.open("/details", "_blank"),
                                     className: "w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-lg flex items-center justify-center gap-3",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$layers$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Layers$3e$__["Layers"], {
                                             className: "h-5 w-5"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 484,
+                                            lineNumber: 527,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Dive into the Details",
@@ -1327,13 +1314,13 @@ MIT License - see LICENSE file for details.`;
                                             className: "h-5 w-5"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 486,
+                                            lineNumber: 529,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 480,
+                                    lineNumber: 523,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1341,30 +1328,30 @@ MIT License - see LICENSE file for details.`;
                                     children: "Explore comprehensive analysis, database insights, and advanced configuration options"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 488,
+                                    lineNumber: 531,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 466,
+                            lineNumber: 509,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 285,
+                    lineNumber: 303,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/tool/page.tsx",
-            lineNumber: 161,
+            lineNumber: 171,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/src/app/tool/page.tsx",
-        lineNumber: 160,
+        lineNumber: 170,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

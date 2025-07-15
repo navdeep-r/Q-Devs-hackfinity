@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import AuthSection from "../components/AuthSection";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   Github,
   Container,
@@ -8,532 +8,287 @@ import {
   CheckCircle,
   AlertCircle,
   Play,
-  Download,
-  Copy,
-  Eye,
-  EyeOff,
+  ArrowRight,
+  Star,
+  Trophy,
+  Lightbulb,
+  Brain,
+  Coffee,
+  Skull,
+  Heart,
+  Sparkles,
 } from "lucide-react";
 
-const ContainerizationTool = () => {
-  const [repoUrl, setRepoUrl] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [isValidUrl, setIsValidUrl] = useState(true);
-  const [showResults, setShowResults] = useState(false);
-  const [activeTab, setActiveTab] = useState("dockerfile");
-  const [showLogs, setShowLogs] = useState(false);
-  const [processingStep, setProcessingStep] = useState(0);
-  const [dockerfileContent, setDockerfileContent] = useState("");
-  const [configContent, setConfigContent] = useState("");
-  const [logsContent, setLogsContent] = useState("");
+const ContainerizationLanding = () => {
+  const router = useRouter();
+  const [currentOneLiner, setCurrentOneLiner] = useState(0);
+  const [aiThought, setAiThought] = useState("");
+  const [showBadge, setShowBadge] = useState(false);
+  const [fortuneCookie, setFortuneCookie] = useState("");
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
-  const processingSteps = [
-    "Cloning repository...",
-    "Analyzing code structure...",
-    "Detecting tech stack...",
-    "Generating Dockerfile...",
-    "Creating configuration files...",
-    "Validating container setup...",
-    "Complete!",
+  const oneLiners = [
+    "Running npm install and praying it works... 🙏",
+    "Python project, but no requirements.txt? We'll survive. 💪",
+    "Another day, another Docker layer that doesn't make sense... 🐳",
+    "When your app works locally but breaks in production... 😭",
+    "Me: 'It works on my machine' Docker: 'Hold my beer' 🍺",
   ];
 
-  const validateGitHubUrl = (url: string) => {
-    const githubRegex = /^https:\/\/github\.com\/[\w\-.]+\/[\w\-.]+\/?$/;
-    return githubRegex.test(url);
-  };
+  const devConfessions = [
+    {
+      text: "TOLD A DEV TO BUILD THE TVK APP..Then when i went to read the codebase i was like 'ahhh..hell na'",
+      author: "THALAPATHY VIJAY",
+      avatar: "👩‍💻",
+    },
+    {
+      text: "I can ACT like a god,race like a god but while reading the opensource codebase it makes me throw up a lot",
+      author: "THALA AJITH",
+      avatar: "🧔‍♂",
+    },
+    {
+      text: "Gonna cook up is what i thought but the broken readme cooked me hell a lot.",
+      author: "POWER STAR",
+      avatar: "🥷",
+    },
+  ];
 
-  const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const url = e.target.value;
-    setRepoUrl(url);
-    if (url) {
-      setIsValidUrl(validateGitHubUrl(url));
-    } else {
-      setIsValidUrl(true);
-    }
-  };
+  const fortuneCookies = [
+    "May your builds never break, and your ports always be exposed. 🔮",
+    "Your containers shall be light, your images optimized, and your deployments swift. ⚡",
+    "The Docker gods smile upon your multi-stage builds. 😇",
+    "In containerization we trust, in AI we believe. 🤖",
+  ];
 
-  // const handleProcess = async () => {
-  //   if (!validateGitHubUrl(repoUrl)) return;
+  const aiThoughts = [
+    "Hmm, detecting project structure... 🤔",
+    "Found package.json - Node.js project detected! 📦",
+    "Analyzing dependencies... this might take a sec ⏳",
+    "Generating optimized Dockerfile... ✨",
+    "Adding security best practices... 🔒",
+    "Dockerfile generated successfully! 🎉",
+  ];
 
-  //   setIsProcessing(true);
-  //   setProcessingStep(0);
-  //   setShowResults(false);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentOneLiner((prev) => (prev + 1) % oneLiners.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
 
-  //   try {
-  //     // Call your backend API to clone the repo
-  //     const response = await fetch("http://localhost:5000/api/repos/clone", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ repoUrl }),
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to clone repository");
-  //     }
-
-  //     const data = await response.json();
-  //     console.log("Clone success:", data);
-
-  //     // Simulate step progress (or adapt as needed)
-  //     for (let i = 0; i < processingSteps.length; i++) {
-  //       setProcessingStep(i);
-  //       await new Promise((resolve) => setTimeout(resolve, 800));
-  //     }
-
-  //     setIsProcessing(false);
-  //     setShowResults(true);
-  //   } catch (error) {
-  //     console.error(error);
-  //     alert("An error occurred while cloning the repository.");
-  //     setIsProcessing(false);
-  //   }
-  // };
-
-  const handleProcess = async () => {
-    if (!validateGitHubUrl(repoUrl)) return;
-    setIsProcessing(true);
-    setProcessingStep(0);
-    setShowResults(false);
-
-    try {
-      setProcessingStep(0); // Cloning
-      const response = await fetch("http://localhost:5000/api/repos/clone", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ repoUrl }),
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          "Server error while cloning and analyzing the repository."
+  const simulateAIAnalysis = () => {
+    setIsAnalyzing(true);
+    let thoughtIndex = 0;
+    setAiThought(aiThoughts[0]);
+    const thinkingInterval = setInterval(() => {
+      if (thoughtIndex < aiThoughts.length) {
+        setAiThought(aiThoughts[thoughtIndex]);
+        thoughtIndex++;
+      } else {
+        clearInterval(thinkingInterval);
+        setIsAnalyzing(false);
+        setShowBadge(true);
+        setFortuneCookie(
+          fortuneCookies[Math.floor(Math.random() * fortuneCookies.length)]
         );
+        setTimeout(() => setShowBadge(false), 3000);
       }
-
-      const data = await response.json();
-
-      // You can customize these
-      setProcessingStep(processingSteps.length - 1); // Complete
-
-      // Store analysis results in state
-      setDockerfileContent(data.analysis.dockerfile || "");
-      setConfigContent(data.analysis.config || "");
-      setLogsContent(data.analysis.logs || "");
-
-      setShowResults(true);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to process repository. Check console for details.");
-    } finally {
-      setIsProcessing(false);
-    }
+    }, 1000);
   };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-  };
-
-  //
-
-  const downloadFile = (filename: string, content: string) => {
-    const blob = new Blob([content], { type: "text/plain" });
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-  };
-
-  const mockDockerfile = `FROM node:18-alpine\n\nWORKDIR /app\n\nCOPY package*.json ./\nRUN npm ci --only=production\n\nCOPY . .\n\nEXPOSE 3000\n\nUSER node\n\nCMD ["npm", "start"]`;
-
-  const mockConfig = `{
-  "name": "my-app-container",
-  "ports": ["3000:3000"],
-  "environment": {
-    "NODE_ENV": "production",
-    "PORT": "3000"
-  },
-  "healthcheck": {
-    "test": ["CMD", "curl", "-f", "http://localhost:3000/health"],
-    "interval": "30s",
-    "timeout": "10s",
-    "retries": 3
-  },
-  "restart": "unless-stopped"
-}`;
-
-  const mockLogs = `[INFO] 2024-01-15 10:30:45 - Repository cloned successfully
-[INFO] 2024-01-15 10:30:46 - Detected Node.js project with Express.js framework
-[INFO] 2024-01-15 10:30:47 - Found package.json with 15 dependencies
-[INFO] 2024-01-15 10:30:48 - Analyzing entry point: src/index.js
-[INFO] 2024-01-15 10:30:49 - Detected port configuration: 3000
-[INFO] 2024-01-15 10:30:50 - Analyzing build requirements
-[INFO] 2024-01-15 10:30:51 - Dockerfile generated with Node.js 18 Alpine base
-[INFO] 2024-01-15 10:30:52 - Configuration includes health checks
-[INFO] 2024-01-15 10:30:53 - Security scan completed - no vulnerabilities found
-[SUCCESS] 2024-01-15 10:30:54 - Container setup validated successfully
-[INFO] 2024-01-15 10:30:55 - Ready for deployment!`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
-      {/* SVG background overlay */}
+    <div className="min-h-screen bg-black overflow-hidden">
+      {/* Animated Background */}
       <div
-        className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40 pointer-events-none`}
+        className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%231DA1F2" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40`}
       ></div>
-      {/* Main content */}
-      <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
-        <AuthSection />
-        {/* Header */}
-        <header className="text-center mb-12">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <div className="p-3 bg-purple-600 rounded-2xl">
-              <Container
-                className="h-8 w-8 text-white"
-                aria-label="Container Icon"
-              />
-            </div>
-            <h1 className="text-4xl font-bold text-white">
-              AI Repository Containerizer
+      {/* Floating Elements */}
+      <div className="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
+        {/* Conversational Hero Section */}
+        <header className="text-center mb-16">
+          <div className="mb-8">
+            <h1 className="text-5xl md:text-7xl font-bold text-white mb-4 leading-tight">
+              Got a repo but no idea
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#1DA1F2] to-[#0a85d9]">
+                NO WORRIES Q-DEVS GOTCH UR BACK
+              </span>
             </h1>
+            <p className="text-lg text-[#AAB8C2] max-w-2xl mx-auto">
+              Forget README.md. Let our AI read your repo like a dev who
+              actually knows what they're doing.
+            </p>
           </div>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Transform any GitHub repository into a production-ready Docker
-            container with the power of AI. Automated analysis, intelligent
-            Dockerfile generation, and seamless containerization.
-          </p>
+          {/* One-liner Generator */}
+          <div className="bg-[#1DA1F2]/10 backdrop-blur-sm rounded-none p-6 mb-8">
+            <div className="flex items-center justify-center gap-3 mb-3">
+              <Coffee className="h-5 w-5 text-[#1DA1F2]" />
+              <span className="text-sm text-[#AAB8C2]">
+                Currently in dev mode...
+              </span>
+            </div>
+            <p className="text-xl text-white font-mono transition-all duration-500 ease-in-out">
+              {oneLiners[currentOneLiner]}
+            </p>
+          </div>
         </header>
-        {/* Features Overview */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Github
-                className="h-6 w-6 text-blue-400"
-                aria-label="GitHub Icon"
-              />
-              <h3 className="text-lg font-semibold text-white">
-                Smart Analysis
-              </h3>
-            </div>
-            <p className="text-gray-300">
-              AI-powered code analysis detects tech stacks, dependencies, and
-              optimal containerization strategies.
-            </p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            <div className="flex items-center gap-3 mb-4">
-              <Zap className="h-6 w-6 text-yellow-400" aria-label="Zap Icon" />
-              <h3 className="text-lg font-semibold text-white">
-                Instant Generation
-              </h3>
-            </div>
-            <p className="text-gray-300">
-              Generate production-ready Dockerfiles and configuration files in
-              seconds, not hours.
-            </p>
-          </div>
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
-            <div className="flex items-center gap-3 mb-4">
-              <CheckCircle
-                className="h-6 w-6 text-green-400"
-                aria-label="Check Icon"
-              />
-              <h3 className="text-lg font-semibold text-white">Validation</h3>
-            </div>
-            <p className="text-gray-300">
-              Automated testing and health checks ensure your containers are
-              ready for deployment.
-            </p>
-          </div>
-        </div>
-        {/* Input Section */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 mb-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Github className="h-6 w-6 text-white" aria-label="GitHub Icon" />
-            <h2 className="text-2xl font-bold text-white">Repository Input</h2>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                GitHub Repository URL
-              </label>
-              <div className="relative">
-                <input
-                  type="url"
-                  value={repoUrl}
-                  onChange={handleUrlChange}
-                  placeholder="https://github.com/username/repository"
-                  className={`w-full px-4 py-3 bg-slate-800 border-2 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${
-                    !isValidUrl ? "border-red-500" : "border-slate-700"
-                  }`}
-                  aria-label="GitHub Repository URL"
-                />
-                {repoUrl && (
-                  <div className="absolute right-3 top-3">
-                    {isValidUrl ? (
-                      <CheckCircle
-                        className="h-5 w-5 text-green-400"
-                        aria-label="Valid URL"
-                      />
-                    ) : (
-                      <AlertCircle
-                        className="h-5 w-5 text-red-400"
-                        aria-label="Invalid URL"
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-              {!isValidUrl && (
-                <p className="text-red-400 text-sm mt-1">
-                  Please enter a valid GitHub repository URL
-                </p>
-              )}
-            </div>
-            <button
-              onClick={handleProcess}
-              disabled={!repoUrl || !isValidUrl || isProcessing}
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 disabled:cursor-not-allowed"
-              aria-label="Containerize Repository"
-            >
-              {isProcessing ? (
-                <div
-                  className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"
-                  aria-label="Processing Spinner"
-                ></div>
-              ) : (
-                <Play className="h-5 w-5" aria-label="Play Icon" />
-              )}
-              {isProcessing ? "Processing..." : "Containerize Repository"}
-            </button>
-            {/* Demo Button */}
-            <button
-              onClick={() => {
-                setRepoUrl("https://github.com/example/demo-app");
-                setIsValidUrl(true);
-                setShowResults(true);
-              }}
-              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-3 mt-2"
-              aria-label="View Demo Results"
-              disabled={isProcessing}
-            >
-              <Eye className="h-5 w-5" aria-label="Eye Icon" />
-              View Demo Results
-            </button>
-          </div>
-        </div>
-        {/* Processing Status */}
-        {isProcessing && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-400"
-                aria-label="Processing Spinner"
-              ></div>
-              <h3 className="text-lg font-semibold text-white">
-                Processing Repository
-              </h3>
-            </div>
-            <div className="space-y-2">
-              {processingSteps.map((step, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center gap-3 p-2 rounded-lg transition-all ${
-                    index === processingStep
-                      ? "bg-purple-600/20 text-purple-300"
-                      : index < processingStep
-                      ? "bg-green-600/20 text-green-300"
-                      : "text-gray-500"
-                  }`}
-                >
-                  {index < processingStep ? (
-                    <CheckCircle
-                      className="h-4 w-4"
-                      aria-label="Step Complete"
-                    />
-                  ) : index === processingStep ? (
-                    <div
-                      className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400"
-                      aria-label="Current Step Spinner"
-                    ></div>
-                  ) : (
-                    <div
-                      className="h-4 w-4 rounded-full border-2 border-gray-600"
-                      aria-label="Pending Step"
-                    ></div>
+        {/* Visual Cue Moments - AI Bot Animation */}
+        <div className="flex justify-center mb-16">
+          <div className="relative">
+            <div className="bg-[#1DA1F2]/10 backdrop-blur-sm rounded-none p-8">
+              <div className="flex items-center gap-6">
+                <div className="relative">
+                  <div className="text-6xl">🤖</div>
+                  {isAnalyzing && (
+                    <div className="absolute -top-2 -right-2">
+                      <div className="animate-spin rounded-none h-6 w-6 border-b-2 border-[#1DA1F2]"></div>
+                    </div>
                   )}
-                  <span className="text-sm">{step}</span>
                 </div>
-              ))}
+                <div className="text-4xl">→</div>
+                <div className="text-6xl">📁</div>
+                <div className="text-4xl">→</div>
+                <div className="relative">
+                  <div className="text-6xl">💡</div>
+                  {!isAnalyzing && (
+                    <div className="absolute -top-1 -right-1 animate-pulse">
+                      <Sparkles className="h-8 w-8 text-[#1DA1F2]" />
+                    </div>
+                  )}
+                </div>
+                <div className="text-4xl">→</div>
+                <div className="text-6xl">🐳</div>
+              </div>
             </div>
+            {/* AI Thought Bubble */}
+            {aiThought && (
+              <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 bg-white text-black rounded-none p-4 shadow-xl animate-fade-in">
+                <div className="text-sm font-medium">{aiThought}</div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
+                  <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-white"></div>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-        {/* Results Section */}
-        {showResults && (
-          <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-white">Generated Files</h2>
-              <button
-                onClick={() => setShowLogs(!showLogs)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white transition-colors"
-                aria-label={showLogs ? "Hide Logs" : "Show Logs"}
-              >
-                {showLogs ? (
-                  <EyeOff className="h-4 w-4" aria-label="Hide Logs Icon" />
-                ) : (
-                  <Eye className="h-4 w-4" aria-label="Show Logs Icon" />
-                )}
-                {showLogs ? "Hide" : "Show"} Logs
-              </button>
+        </div>
+        {/* Before/After Comparison */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <div className="bg-[#1DA1F2]/10 backdrop-blur-sm rounded-none p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Skull className="h-6 w-6 text-[#1DA1F2]" />
+              <h3 className="text-2xl font-bold text-white">Before 😭</h3>
             </div>
-            {/* Tabs */}
-            <div className="flex space-x-1 mb-6 bg-slate-800 rounded-lg p-1">
-              {[
-                { id: "dockerfile", label: "Dockerfile" },
-                { id: "config", label: "Configuration" },
-                { id: "logs", label: "Analysis Logs" },
-              ].map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex-1 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? "bg-purple-600 text-white"
-                      : "text-gray-300 hover:text-white hover:bg-slate-700"
-                  }`}
-                  aria-label={tab.label}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            {/* Tab Content */}
             <div className="space-y-4">
-              {activeTab === "dockerfile" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white">
-                      Dockerfile
-                    </h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          copyToClipboard(
-                            dockerfileContent || "No Dockerfile generated."
-                          )
-                        }
-                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Copy Dockerfile"
-                      >
-                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
-                        Copy
-                      </button>
-                      <button
-                        onClick={() =>
-                          downloadFile(
-                            "Dockerfile",
-                            dockerfileContent || "No Dockerfile generated."
-                          )
-                        }
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Download Dockerfile"
-                      >
-                        <Download
-                          className="h-4 w-4"
-                          aria-label="Download Icon"
-                        />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="text-gray-300 text-sm overflow-x-auto">
-                    <code>
-                      {dockerfileContent || "No Dockerfile generated."}
-                    </code>
-                  </pre>
-                </div>
-              )}
-              {activeTab === "config" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white">
-                      Container Configuration
-                    </h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          copyToClipboard(
-                            configContent || "No configuration generated."
-                          )
-                        }
-                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Copy Config"
-                      >
-                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
-                        Copy
-                      </button>
-                      <button
-                        onClick={() =>
-                          downloadFile(
-                            "container-config.json",
-                            configContent || "No configuration generated."
-                          )
-                        }
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Download Config"
-                      >
-                        <Download
-                          className="h-4 w-4"
-                          aria-label="Download Icon"
-                        />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="text-gray-300 text-sm overflow-x-auto">
-                    <code>
-                      {configContent || "No configuration generated."}
-                    </code>
-                  </pre>
-                </div>
-              )}
-              {activeTab === "logs" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <h3 className="text-lg font-semibold text-white mb-3">
-                    Analysis Logs
-                  </h3>
-                  <pre className="text-gray-300 text-sm overflow-x-auto whitespace-pre-wrap">
-                    <code>{logsContent || "No logs available."}</code>
-                  </pre>
-                </div>
-              )}
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex gap-4 mt-6">
-              <button
-                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
-                aria-label="Deploy Container"
-              >
-                Deploy Container
-              </button>
-              <button
-                className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
-                aria-label="Test Locally"
-              >
-                Test Locally
-              </button>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">1️⃣</span>
+                <span>Clone repo</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">2️⃣</span>
+                <span>Read the codebase for hours trying to decrypt it</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">3️⃣</span>
+                <span>Figuring it how to go about rquired changes</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">4️⃣</span>
+                <span>Debug for hours?....DAYS!!!</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">5️⃣</span>
+                <span>Trying to containerize it </span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">6️⃣</span>
+                <span>sad ur lifespan is already over</span>
+              </div>
             </div>
           </div>
-        )}
+          <div className="bg-[#1DA1F2]/10 backdrop-blur-sm rounded-none p-8">
+            <div className="flex items-center gap-3 mb-6">
+              <Heart className="h-6 w-6 text-[#1DA1F2]" />
+              <h3 className="text-2xl font-bold text-white">After 🎉</h3>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">1️⃣</span>
+                <span>Paste URL</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">2️⃣</span>
+                <span>Hit Generate</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#AAB8C2]">
+                <span className="text-xl">3️⃣</span>
+                <span>Done!Only hard work left is to work on changes!!</span>
+              </div>
+              <div className="flex items-center gap-3 text-[#1DA1F2] font-semibold">
+                <span className="text-xl">✨</span>
+                <span>NOW Go get coffee instead</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Dev Confession Box */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-white text-center mb-8">
+            Dev Confessions 💭
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {devConfessions.map((confession, index) => (
+              <div
+                key={index}
+                className="bg-[#1DA1F2]/10 backdrop-blur-sm rounded-none p-6 hover:bg-[#1DA1F2]/15 transition-all duration-300"
+              >
+                <div className="flex items-start gap-3 mb-4">
+                  <span className="text-2xl">{confession.avatar}</span>
+                  <div>
+                    <div className="font-semibold text-white">
+                      @{confession.author}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-[#AAB8C2] italic">"{confession.text}"</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Funny Edge Case */}
+
+        {/* Main CTA - Interactive Button to page.jsx */}
+        <div className="text-center">
+          <div className="bg-black rounded-none p-8 shadow-2xl">
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Ready to Containerize Like a Pro? 🎯
+            </h2>
+            <p className="text-[#AAB8C2] mb-8 max-w-2xl mx-auto">
+              We don't judge your spaghetti code. We dockerize it. Experience
+              the full power of AI-driven containerization.
+            </p>
+            <button
+              onClick={() => router.push("/tool")}
+              className="group bg-gradient-to-r from-[#1DA1F2] to-[#0a85d9] hover:from-[#0a85d9] hover:to-[#1DA1F2] text-white font-bold py-6 px-12 rounded-none transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-4 mx-auto"
+            >
+              <Container className="h-8 w-8 group-hover:animate-pulse" />
+              <span className="text-2xl">LET US COOK!</span>
+              <ArrowRight className="h-8 w-8 group-hover:translate-x-2 transition-transform" />
+            </button>
+            <p className="text-sm text-[#AAB8C2] mt-4">
+              CLICK ABOVE to the complete containerization tool with advanced
+              features, real-time processing, and comprehensive repository
+              analysis.
+            </p>
+          </div>
+        </div>
+        {/* Footer */}
+        <footer className="text-center mt-16 text-[#AAB8C2]">
+          <hr></hr>
+          <p>COOKED UP BY THE QUANTUM DEVS</p>
+        </footer>
       </div>
     </div>
   );
 };
 
-export default function Page() {
-  return <ContainerizationTool />;
-}
+export default ContainerizationLanding;
