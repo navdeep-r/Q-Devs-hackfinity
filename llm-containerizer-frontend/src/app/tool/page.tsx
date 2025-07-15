@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import AuthSection from "../components/AuthSection";
+import AuthSection from "../../components/AuthSection";
 import {
   Github,
   Container,
