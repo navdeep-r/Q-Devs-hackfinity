@@ -4,13 +4,13 @@ const passport = require('passport');
 
 const router = express.Router();
 
-// Home route (optional)
-router.get('/', (req, res) => {
-    res.send(`
-    <h2>DockZen - GitHub OAuth Example</h2>
-    <a href="${req.baseUrl}/github">Login with GitHub</a>
-  `);
-});
+// Home route (commented out - handled by frontend)
+// router.get('/', (req, res) => {
+//     res.send(`
+//     <h2>DockZen - GitHub OAuth Example</h2>
+//     <a href="${req.baseUrl}/github">Login with GitHub</a>
+//   `);
+// });
 
 // Login Route
 router.get('/github', passport.authenticate('github', { scope: ['repo'] }));
@@ -18,23 +18,27 @@ router.get('/github', passport.authenticate('github', { scope: ['repo'] }));
 // Callback Route
 router.get(
     '/github/callback',
-    passport.authenticate('github', { failureRedirect: '/api/auth/failure' }),
+    passport.authenticate('github', {
+        failureRedirect: process.env.FRONTEND_URL || '/',
+    }),
     (req, res) => {
-        res.redirect(`${req.baseUrl}/profile`);
+        // On success, redirect to frontend profile page
+        res.redirect(`${process.env.FRONTEND_URL}/profile`);
     }
 );
 
-// Profile Route
+// Profile Route (API only: returns JSON status)
 router.get('/profile', (req, res) => {
     if (!req.isAuthenticated()) {
-        return res.redirect(`${req.baseUrl}`);
+        // Redirect unauthenticated users to frontend login
+        return res.redirect(`${process.env.FRONTEND_URL}/login`);
     }
 
-    res.send(`
-    <h2>Welcome, ${req.user.username}</h2>
-    <img src="${req.user.photos[0].value}" alt="Avatar" />
-    <p><a href="${req.baseUrl}/logout">Logout</a></p>
-  `);
+    // Optionally return profile data as JSON
+    res.json({
+        username: req.user.username,
+        avatar: req.user.photos[0].value,
+    });
 });
 
 // Logout Route
@@ -43,16 +47,13 @@ router.get('/logout', (req, res) => {
         if (err) {
             return res.status(500).send('Error logging out.');
         }
-        res.redirect(`${req.baseUrl}`);
+        res.redirect(`${process.env.FRONTEND_URL}/login`);
     });
 });
 
-// Optional failure handler
+// Failure handler (optional)
 router.get('/failure', (req, res) => {
-    res.send(`
-    <h2>GitHub Authentication Failed</h2>
-    <p><a href="${req.baseUrl}/github">Try Again</a></p>
-  `);
+    res.redirect(`${process.env.FRONTEND_URL}/login`);
 });
 
 module.exports = router;
