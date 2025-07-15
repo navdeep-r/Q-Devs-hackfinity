@@ -1,3 +1,4 @@
 .env
 nil.txt
 node_modules/
+llm-containerizer-frontend/
