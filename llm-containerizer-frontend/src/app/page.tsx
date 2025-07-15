@@ -410,10 +410,106 @@ const ContainerizationTool = () => {
             </div>
             {/* Tab Content */}
             <div className="space-y-4">
-              <code>{dockerfileContent || "No Dockerfile generated."}</code>
-              <code>{configContent || "No configuration generated."}</code>
-              <code>{logsContent || "No logs available."}</code>
+              {activeTab === "dockerfile" && (
+                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-white">
+                      Dockerfile
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          copyToClipboard(
+                            dockerfileContent || "No Dockerfile generated."
+                          )
+                        }
+                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
+                        aria-label="Copy Dockerfile"
+                      >
+                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
+                        Copy
+                      </button>
+                      <button
+                        onClick={() =>
+                          downloadFile(
+                            "Dockerfile",
+                            dockerfileContent || "No Dockerfile generated."
+                          )
+                        }
+                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
+                        aria-label="Download Dockerfile"
+                      >
+                        <Download
+                          className="h-4 w-4"
+                          aria-label="Download Icon"
+                        />
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                  <pre className="text-gray-300 text-sm overflow-x-auto">
+                    <code>
+                      {dockerfileContent || "No Dockerfile generated."}
+                    </code>
+                  </pre>
+                </div>
+              )}
+              {activeTab === "config" && (
+                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-white">
+                      Container Configuration
+                    </h3>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          copyToClipboard(
+                            configContent || "No configuration generated."
+                          )
+                        }
+                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
+                        aria-label="Copy Config"
+                      >
+                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
+                        Copy
+                      </button>
+                      <button
+                        onClick={() =>
+                          downloadFile(
+                            "container-config.json",
+                            configContent || "No configuration generated."
+                          )
+                        }
+                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
+                        aria-label="Download Config"
+                      >
+                        <Download
+                          className="h-4 w-4"
+                          aria-label="Download Icon"
+                        />
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                  <pre className="text-gray-300 text-sm overflow-x-auto">
+                    <code>
+                      {configContent || "No configuration generated."}
+                    </code>
+                  </pre>
+                </div>
+              )}
+              {activeTab === "logs" && (
+                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                  <h3 className="text-lg font-semibold text-white mb-3">
+                    Analysis Logs
+                  </h3>
+                  <pre className="text-gray-300 text-sm overflow-x-auto whitespace-pre-wrap">
+                    <code>{logsContent || "No logs available."}</code>
+                  </pre>
+                </div>
+              )}
             </div>
+
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6">
               <button

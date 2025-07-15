@@ -7,6 +7,7 @@ const { analyzeRepo } = require("../utils/analyserepo");
 const router = express.Router()
 
 router.post("/clone", async (req, res) => {
+    console.log('e')
     const { repoUrl } = req.body;
     if (!repoUrl) return res.status(400).json({ error: "Repository URL is required." });
 
