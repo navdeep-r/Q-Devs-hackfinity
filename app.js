@@ -3,7 +3,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const GitHubStrategy = require('passport-github2').Strategy;
-const { analyzeRepo } = require('./utils/analyserepo');
+const { analyzeRepo } = require('./utils/analyseREADME');
 require('dotenv').config();
 
 const app = express();

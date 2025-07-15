@@ -83,7 +83,7 @@
 const fs = require("fs").promises;
 const path = require("path");
 
-async function walkDir(dir, baseDir = "") {
+async function walkDir(dir, baseDir = "", pattern = null) {
     const results = [];
 
     const ignoredDirs = new Set([
@@ -108,30 +108,31 @@ async function walkDir(dir, baseDir = "") {
         const relPath = path.join(baseDir, entry.name);
 
         if (entry.isDirectory()) {
-            const subResults = await walkDir(fullPath, relPath);
+            const subResults = await walkDir(fullPath, relPath, pattern);
             results.push(...subResults);
         } else {
-            const stat = await fs.stat(fullPath);
+            if (pattern && pattern.test(entry.name.split('/').at(-1))) continue;
+            //     const stat = await fs.stat(fullPath);
 
             // Determine file type based on extension
-            const ext = path.extname(entry.name).toLowerCase();
-            let type = "unknown";
-            if (ext === ".js") type = "javascript";
-            else if (ext === ".ts") type = "typescript";
-            else if (ext === ".py") type = "python";
-            else if (ext === ".json") type = "json";
-            else if (ext === ".yml" || ext === ".yaml") type = "yaml";
-            else if (ext === ".md") type = "markdown";
-            else if (ext === ".dockerfile" || entry.name.toLowerCase() === "dockerfile") type = "dockerfile";
-            else if (ext === ".sh") type = "shell";
-            else if (ext === ".html") type = "html";
-            else if (ext === ".css") type = "css";
-            else if (ext === ".txt") type = "text";
+            // const ext = path.extname(entry.name).toLowerCase();
+            // let type = "unknown";
+            // if (ext === ".js") type = "javascript";
+            // else if (ext === ".ts") type = "typescript";
+            // else if (ext === ".py") type = "python";
+            // else if (ext === ".json") type = "json";
+            // else if (ext === ".yml" || ext === ".yaml") type = "yaml";
+            // else if (ext === ".md") type = "markdown";
+            // else if (ext === ".dockerfile" || entry.name.toLowerCase() === "dockerfile") type = "dockerfile";
+            // else if (ext === ".sh") type = "shell";
+            // else if (ext === ".html") type = "html";
+            // else if (ext === ".css") type = "css";
+            // else if (ext === ".txt") type = "text";
 
             results.push({
                 path: relPath,   // e.g. "src/app.js"
-                size: stat.size,
-                type: type
+                // size: stat.size,
+                // type: type
             });
         }
     }
@@ -155,7 +156,7 @@ async function analyzeRepo(localPath) {
 
     try {
         // Collect all files recursively
-        result.files = await walkDir(localPath);
+        result.files = await walkDir(localPath, "", /^(package\.json|.*\.md)$/);
 
         // Check for package.json
         const pkgJsonPath = path.join(localPath, "package.json");
@@ -210,6 +211,8 @@ async function analyzeRepo(localPath) {
         console.error("Error analyzing repository:", error);
         throw error;
     }
+
+    console.log(result)
 
     return result;
 }
