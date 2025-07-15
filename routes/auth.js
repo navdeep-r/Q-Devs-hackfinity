@@ -23,7 +23,7 @@ router.get(
     }),
     (req, res) => {
         // On success, redirect to frontend profile page
-        res.redirect(`${process.env.FRONTEND_URL}/profile`);
+        res.redirect(`${process.env.FRONTEND_URL}`);
     }
 );
 

@@ -22,6 +22,9 @@ const ContainerizationTool = () => {
   const [activeTab, setActiveTab] = useState("dockerfile");
   const [showLogs, setShowLogs] = useState(false);
   const [processingStep, setProcessingStep] = useState(0);
+  const [dockerfileContent, setDockerfileContent] = useState("");
+  const [configContent, setConfigContent] = useState("");
+  const [logsContent, setLogsContent] = useState("");
 
   const processingSteps = [
     "Cloning repository...",
@@ -48,17 +51,84 @@ const ContainerizationTool = () => {
     }
   };
 
+  // const handleProcess = async () => {
+  //   if (!validateGitHubUrl(repoUrl)) return;
+
+  //   setIsProcessing(true);
+  //   setProcessingStep(0);
+  //   setShowResults(false);
+
+  //   try {
+  //     // Call your backend API to clone the repo
+  //     const response = await fetch("http://localhost:5000/api/repos/clone", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ repoUrl }),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Failed to clone repository");
+  //     }
+
+  //     const data = await response.json();
+  //     console.log("Clone success:", data);
+
+  //     // Simulate step progress (or adapt as needed)
+  //     for (let i = 0; i < processingSteps.length; i++) {
+  //       setProcessingStep(i);
+  //       await new Promise((resolve) => setTimeout(resolve, 800));
+  //     }
+
+  //     setIsProcessing(false);
+  //     setShowResults(true);
+  //   } catch (error) {
+  //     console.error(error);
+  //     alert("An error occurred while cloning the repository.");
+  //     setIsProcessing(false);
+  //   }
+  // };
+
   const handleProcess = async () => {
     if (!validateGitHubUrl(repoUrl)) return;
     setIsProcessing(true);
     setProcessingStep(0);
     setShowResults(false);
-    for (let i = 0; i < processingSteps.length; i++) {
-      setProcessingStep(i);
-      await new Promise((resolve) => setTimeout(resolve, 800));
+
+    try {
+      setProcessingStep(0); // Cloning
+      const response = await fetch("http://localhost:5000/api/repos/clone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ repoUrl }),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          "Server error while cloning and analyzing the repository."
+        );
+      }
+
+      const data = await response.json();
+
+      // You can customize these
+      setProcessingStep(processingSteps.length - 1); // Complete
+
+      // Store analysis results in state
+      setDockerfileContent(data.analysis.dockerfile || "");
+      setConfigContent(data.analysis.config || "");
+      setLogsContent(data.analysis.logs || "");
+
+      setShowResults(true);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to process repository. Check console for details.");
+    } finally {
+      setIsProcessing(false);
     }
-    setIsProcessing(false);
-    setShowResults(true);
   };
 
   const copyToClipboard = (text: string) => {
@@ -109,7 +179,9 @@ const ContainerizationTool = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
       {/* SVG background overlay */}
-      <div className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40 pointer-events-none`}></div>
+      <div
+        className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40 pointer-events-none`}
+      ></div>
       {/* Main content */}
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
         <AuthSection />
@@ -117,36 +189,62 @@ const ContainerizationTool = () => {
         <header className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-6">
             <div className="p-3 bg-purple-600 rounded-2xl">
-              <Container className="h-8 w-8 text-white" aria-label="Container Icon" />
+              <Container
+                className="h-8 w-8 text-white"
+                aria-label="Container Icon"
+              />
             </div>
-            <h1 className="text-4xl font-bold text-white">AI Repository Containerizer</h1>
+            <h1 className="text-4xl font-bold text-white">
+              AI Repository Containerizer
+            </h1>
           </div>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Transform any GitHub repository into a production-ready Docker container with the power of AI. Automated analysis, intelligent Dockerfile generation, and seamless containerization.
+            Transform any GitHub repository into a production-ready Docker
+            container with the power of AI. Automated analysis, intelligent
+            Dockerfile generation, and seamless containerization.
           </p>
         </header>
         {/* Features Overview */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="flex items-center gap-3 mb-4">
-              <Github className="h-6 w-6 text-blue-400" aria-label="GitHub Icon" />
-              <h3 className="text-lg font-semibold text-white">Smart Analysis</h3>
+              <Github
+                className="h-6 w-6 text-blue-400"
+                aria-label="GitHub Icon"
+              />
+              <h3 className="text-lg font-semibold text-white">
+                Smart Analysis
+              </h3>
             </div>
-            <p className="text-gray-300">AI-powered code analysis detects tech stacks, dependencies, and optimal containerization strategies.</p>
+            <p className="text-gray-300">
+              AI-powered code analysis detects tech stacks, dependencies, and
+              optimal containerization strategies.
+            </p>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="flex items-center gap-3 mb-4">
               <Zap className="h-6 w-6 text-yellow-400" aria-label="Zap Icon" />
-              <h3 className="text-lg font-semibold text-white">Instant Generation</h3>
+              <h3 className="text-lg font-semibold text-white">
+                Instant Generation
+              </h3>
             </div>
-            <p className="text-gray-300">Generate production-ready Dockerfiles and configuration files in seconds, not hours.</p>
+            <p className="text-gray-300">
+              Generate production-ready Dockerfiles and configuration files in
+              seconds, not hours.
+            </p>
           </div>
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
             <div className="flex items-center gap-3 mb-4">
-              <CheckCircle className="h-6 w-6 text-green-400" aria-label="Check Icon" />
+              <CheckCircle
+                className="h-6 w-6 text-green-400"
+                aria-label="Check Icon"
+              />
               <h3 className="text-lg font-semibold text-white">Validation</h3>
             </div>
-            <p className="text-gray-300">Automated testing and health checks ensure your containers are ready for deployment.</p>
+            <p className="text-gray-300">
+              Automated testing and health checks ensure your containers are
+              ready for deployment.
+            </p>
           </div>
         </div>
         {/* Input Section */}
@@ -157,27 +255,41 @@ const ContainerizationTool = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">GitHub Repository URL</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                GitHub Repository URL
+              </label>
               <div className="relative">
                 <input
                   type="url"
                   value={repoUrl}
                   onChange={handleUrlChange}
                   placeholder="https://github.com/username/repository"
-                  className={`w-full px-4 py-3 bg-slate-800 border-2 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${!isValidUrl ? "border-red-500" : "border-slate-700"}`}
+                  className={`w-full px-4 py-3 bg-slate-800 border-2 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all ${
+                    !isValidUrl ? "border-red-500" : "border-slate-700"
+                  }`}
                   aria-label="GitHub Repository URL"
                 />
                 {repoUrl && (
                   <div className="absolute right-3 top-3">
                     {isValidUrl ? (
-                      <CheckCircle className="h-5 w-5 text-green-400" aria-label="Valid URL" />
+                      <CheckCircle
+                        className="h-5 w-5 text-green-400"
+                        aria-label="Valid URL"
+                      />
                     ) : (
-                      <AlertCircle className="h-5 w-5 text-red-400" aria-label="Invalid URL" />
+                      <AlertCircle
+                        className="h-5 w-5 text-red-400"
+                        aria-label="Invalid URL"
+                      />
                     )}
                   </div>
                 )}
               </div>
-              {!isValidUrl && <p className="text-red-400 text-sm mt-1">Please enter a valid GitHub repository URL</p>}
+              {!isValidUrl && (
+                <p className="text-red-400 text-sm mt-1">
+                  Please enter a valid GitHub repository URL
+                </p>
+              )}
             </div>
             <button
               onClick={handleProcess}
@@ -186,7 +298,10 @@ const ContainerizationTool = () => {
               aria-label="Containerize Repository"
             >
               {isProcessing ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" aria-label="Processing Spinner"></div>
+                <div
+                  className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"
+                  aria-label="Processing Spinner"
+                ></div>
               ) : (
                 <Play className="h-5 w-5" aria-label="Play Icon" />
               )}
@@ -212,8 +327,13 @@ const ContainerizationTool = () => {
         {isProcessing && (
           <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 mb-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-400" aria-label="Processing Spinner"></div>
-              <h3 className="text-lg font-semibold text-white">Processing Repository</h3>
+              <div
+                className="animate-spin rounded-full h-5 w-5 border-b-2 border-purple-400"
+                aria-label="Processing Spinner"
+              ></div>
+              <h3 className="text-lg font-semibold text-white">
+                Processing Repository
+              </h3>
             </div>
             <div className="space-y-2">
               {processingSteps.map((step, index) => (
@@ -228,11 +348,20 @@ const ContainerizationTool = () => {
                   }`}
                 >
                   {index < processingStep ? (
-                    <CheckCircle className="h-4 w-4" aria-label="Step Complete" />
+                    <CheckCircle
+                      className="h-4 w-4"
+                      aria-label="Step Complete"
+                    />
                   ) : index === processingStep ? (
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400" aria-label="Current Step Spinner"></div>
+                    <div
+                      className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-400"
+                      aria-label="Current Step Spinner"
+                    ></div>
                   ) : (
-                    <div className="h-4 w-4 rounded-full border-2 border-gray-600" aria-label="Pending Step"></div>
+                    <div
+                      className="h-4 w-4 rounded-full border-2 border-gray-600"
+                      aria-label="Pending Step"
+                    ></div>
                   )}
                   <span className="text-sm">{step}</span>
                 </div>
@@ -250,7 +379,11 @@ const ContainerizationTool = () => {
                 className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-white transition-colors"
                 aria-label={showLogs ? "Hide Logs" : "Show Logs"}
               >
-                {showLogs ? <EyeOff className="h-4 w-4" aria-label="Hide Logs Icon" /> : <Eye className="h-4 w-4" aria-label="Show Logs Icon" />}
+                {showLogs ? (
+                  <EyeOff className="h-4 w-4" aria-label="Hide Logs Icon" />
+                ) : (
+                  <Eye className="h-4 w-4" aria-label="Show Logs Icon" />
+                )}
                 {showLogs ? "Hide" : "Show"} Logs
               </button>
             </div>
@@ -277,77 +410,22 @@ const ContainerizationTool = () => {
             </div>
             {/* Tab Content */}
             <div className="space-y-4">
-              {activeTab === "dockerfile" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white">Dockerfile</h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => copyToClipboard(mockDockerfile)}
-                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Copy Dockerfile"
-                      >
-                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
-                        Copy
-                      </button>
-                      <button
-                        onClick={() => downloadFile("Dockerfile", mockDockerfile)}
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Download Dockerfile"
-                      >
-                        <Download className="h-4 w-4" aria-label="Download Icon" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="text-gray-300 text-sm overflow-x-auto">
-                    <code>{mockDockerfile}</code>
-                  </pre>
-                </div>
-              )}
-              {activeTab === "config" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-white">Container Configuration</h3>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => copyToClipboard(mockConfig)}
-                        className="flex items-center gap-1 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Copy Config"
-                      >
-                        <Copy className="h-4 w-4" aria-label="Copy Icon" />
-                        Copy
-                      </button>
-                      <button
-                        onClick={() => downloadFile("container-config.json", mockConfig)}
-                        className="flex items-center gap-1 px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors"
-                        aria-label="Download Config"
-                      >
-                        <Download className="h-4 w-4" aria-label="Download Icon" />
-                        Download
-                      </button>
-                    </div>
-                  </div>
-                  <pre className="text-gray-300 text-sm overflow-x-auto">
-                    <code>{mockConfig}</code>
-                  </pre>
-                </div>
-              )}
-              {activeTab === "logs" && (
-                <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                  <h3 className="text-lg font-semibold text-white mb-3">Analysis Logs</h3>
-                  <pre className="text-gray-300 text-sm overflow-x-auto whitespace-pre-wrap">
-                    <code>{mockLogs}</code>
-                  </pre>
-                </div>
-              )}
+              <code>{dockerfileContent || "No Dockerfile generated."}</code>
+              <code>{configContent || "No configuration generated."}</code>
+              <code>{logsContent || "No logs available."}</code>
             </div>
             {/* Action Buttons */}
             <div className="flex gap-4 mt-6">
-              <button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200" aria-label="Deploy Container">
+              <button
+                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
+                aria-label="Deploy Container"
+              >
                 Deploy Container
               </button>
-              <button className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200" aria-label="Test Locally">
+              <button
+                className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200"
+                aria-label="Test Locally"
+              >
                 Test Locally
               </button>
             </div>

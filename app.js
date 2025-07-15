@@ -56,7 +56,7 @@ app.get('/', (req, res) => {
 });
 
 // Start server
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 const HOST = process.env.HOST || 'localhost';
 
 
@@ -65,13 +65,13 @@ app.listen(PORT, HOST, () => {
     console.log(`Server running at ${`http://${HOST}:${PORT}`}`);
 
     //Playground
-    (async () => {
-        const localRepoPath = './cloned_repos/repo_1752582222156'
-        const analysis = await analyzeRepo(localRepoPath);
+    // (async () => {
+    //     const localRepoPath = './cloned_repos/repo_1752582222156'
+    //     const analysis = await analyzeRepo(localRepoPath);
 
-        console.log('--- Repo Analysis Result ---');
-        console.log(JSON.stringify(analysis, null, 2));
-    })()
+    //     console.log('--- Repo Analysis Result ---');
+    //     console.log(JSON.stringify(analysis, null, 2));
+    // })()
     //Playground
 
 });

@@ -8,8 +8,9 @@ export default function AuthSection() {
   const handleSignIn = () => {
     setLoading(true);
     // Use environment variable for backend URL, fallback to localhost
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-    window.location.href = `${backendUrl}/auth/github`;
+    const backendUrl =
+      process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+    window.location.href = `${backendUrl}/api/auth/github`;
   };
 
   return (
@@ -19,7 +20,8 @@ export default function AuthSection() {
         <h2 className="text-2xl font-bold text-white">Authenticate</h2>
       </div>
       <p className="text-gray-300 mb-4">
-        Sign in to enable secure access to private repositories and session-based customization.
+        Sign in to enable secure access to private repositories and
+        session-based customization.
       </p>
       <button
         type="button"
