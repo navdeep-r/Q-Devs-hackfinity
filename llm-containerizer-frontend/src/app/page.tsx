@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import AuthSection from "../components/AuthSection";
 import {
   Github,
   Container,
@@ -32,7 +33,7 @@ const ContainerizationTool = () => {
     "Complete!",
   ];
 
-  const validateGitHubUrl = (url: string): boolean => {
+  const validateGitHubUrl = (url: string) => {
     const githubRegex = /^https:\/\/github\.com\/[\w\-.]+\/[\w\-.]+\/?$/;
     return githubRegex.test(url);
   };
@@ -54,7 +55,6 @@ const ContainerizationTool = () => {
     setShowResults(false);
     for (let i = 0; i < processingSteps.length; i++) {
       setProcessingStep(i);
-      // eslint-disable-next-line no-await-in-loop
       await new Promise((resolve) => setTimeout(resolve, 800));
     }
     setIsProcessing(false);
@@ -76,7 +76,7 @@ const ContainerizationTool = () => {
     URL.revokeObjectURL(link.href);
   };
 
-  const mockDockerfile = `FROM node:18-alpine\n\nWORKDIR /app\n\nCOPY package*.json ./\nRUN npm ci --only=production\n\nCOPY . .\n\nEXPOSE 3000\n\nUSER node\n\nCMD [\"npm\", \"start\"]`;
+  const mockDockerfile = `FROM node:18-alpine\n\nWORKDIR /app\n\nCOPY package*.json ./\nRUN npm ci --only=production\n\nCOPY . .\n\nEXPOSE 3000\n\nUSER node\n\nCMD ["npm", "start"]`;
 
   const mockConfig = `{
   "name": "my-app-container",
@@ -94,12 +94,25 @@ const ContainerizationTool = () => {
   "restart": "unless-stopped"
 }`;
 
-  const mockLogs = `[INFO] 2024-01-15 10:30:45 - Repository cloned successfully\n[INFO] 2024-01-15 10:30:46 - Detected Node.js project with Express.js framework\n[INFO] 2024-01-15 10:30:47 - Found package.json with 15 dependencies\n[INFO] 2024-01-15 10:30:48 - Analyzing entry point: src/index.js\n[INFO] 2024-01-15 10:30:49 - Detected port configuration: 3000\n[INFO] 2024-01-15 10:30:50 - Analyzing build requirements\n[INFO] 2024-01-15 10:30:51 - Dockerfile generated with Node.js 18 Alpine base\n[INFO] 2024-01-15 10:30:52 - Configuration includes health checks\n[INFO] 2024-01-15 10:30:53 - Security scan completed - no vulnerabilities found\n[SUCCESS] 2024-01-15 10:30:54 - Container setup validated successfully\n[INFO] 2024-01-15 10:30:55 - Ready for deployment!`;
+  const mockLogs = `[INFO] 2024-01-15 10:30:45 - Repository cloned successfully
+[INFO] 2024-01-15 10:30:46 - Detected Node.js project with Express.js framework
+[INFO] 2024-01-15 10:30:47 - Found package.json with 15 dependencies
+[INFO] 2024-01-15 10:30:48 - Analyzing entry point: src/index.js
+[INFO] 2024-01-15 10:30:49 - Detected port configuration: 3000
+[INFO] 2024-01-15 10:30:50 - Analyzing build requirements
+[INFO] 2024-01-15 10:30:51 - Dockerfile generated with Node.js 18 Alpine base
+[INFO] 2024-01-15 10:30:52 - Configuration includes health checks
+[INFO] 2024-01-15 10:30:53 - Security scan completed - no vulnerabilities found
+[SUCCESS] 2024-01-15 10:30:54 - Container setup validated successfully
+[INFO] 2024-01-15 10:30:55 - Ready for deployment!`;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40`}></div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative">
+      {/* SVG background overlay */}
+      <div className={`absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-40 pointer-events-none`}></div>
+      {/* Main content */}
       <div className="relative z-10 container mx-auto px-4 py-8 max-w-6xl">
+        <AuthSection />
         {/* Header */}
         <header className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-6">
