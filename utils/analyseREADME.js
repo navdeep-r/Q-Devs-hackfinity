@@ -1,7 +1,7 @@
 const fs = require("fs").promises;
 const path = require("path");
 
-async function walkDirByLines(dir, baseDir = "", allowedExts = [".js", ".ts", ".py", ".java", ".cpp"]) {
+async function walkDirByLines(dir, baseDir = "", allowedExts = ['.py', '.js', '.ts', '.json', '.java', '.c', '.cpp', '.cs', '.go', '.rb', '.php', '.rs', '.sh', '.html', '.css']) {
     const extStats = {}; // { ".js": 123, ".py": 543, ... }
     const ignoredDirs = new Set([".git", "node_modules", ".next", ".cache", "venv", "__pycache__", "dist", "build"]);
 
