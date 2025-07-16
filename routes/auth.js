@@ -27,6 +27,26 @@ router.get(
     }
 );
 
+// Status Route - Check if user is authenticated
+router.get('/status', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({
+            isAuthenticated: true,
+            user: {
+                username: req.user.username,
+                displayName: req.user.displayName,
+                avatar: req.user.photos?.[0]?.value,
+                accessToken: req.user.accessToken,
+            }
+        });
+    } else {
+        res.json({
+            isAuthenticated: false,
+            user: null
+        });
+    }
+});
+
 // Profile Route (API only: returns JSON status)
 router.get('/profile', (req, res) => {
     if (!req.isAuthenticated()) {
@@ -42,13 +62,23 @@ router.get('/profile', (req, res) => {
     });
 });
 
-// Logout Route
+// Logout Route - Support both GET and POST
 router.get('/logout', (req, res) => {
     req.logout(err => {
         if (err) {
             return res.status(500).send('Error logging out.');
         }
         res.redirect(`${process.env.FRONTEND_URL}/login`);
+    });
+});
+
+// POST logout for API calls
+router.post('/logout', (req, res) => {
+    req.logout(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Error logging out.' });
+        }
+        res.json({ success: true, message: 'Logged out successfully' });
     });
 });
 
