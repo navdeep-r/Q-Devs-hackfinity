@@ -2,7 +2,7 @@ const fs = require("fs").promises;
 const path = require("path");
 
 async function walkDirByLines(dir, baseDir = "", allowedExts = ['.py', '.js', '.ts', '.json', '.java', '.c', '.cpp', '.cs', '.go', '.rb', '.php', '.rs', '.sh', '.html', '.css']) {
-    const extStats = {}; // { ".js": 123, ".py": 543, ... }
+    const extStats = {};
     const ignoredDirs = new Set([".git", "node_modules", ".next", ".cache", "venv", "__pycache__", "dist", "build"]);
 
     const entries = await fs.readdir(dir, { withFileTypes: true });
@@ -48,8 +48,9 @@ async function walkDir(dir, baseDir = "", pattern = null) {
             const subResults = await walkDir(fullPath, relPath, pattern);
             results.push(...subResults);
         } else {
-            if (!pattern.test(entry.name)) continue;
-            results.push({ path: relPath });
+            if (!pattern || pattern.test(entry.name)) {
+                results.push({ path: relPath });
+            }
         }
     }
     return results;
@@ -63,10 +64,14 @@ async function analyzeRepo(localPath) {
         hasDockerfile: false,
         hasReadme: false,
         startScript: null,
-        entryPoint: null, // ADD THIS
+        entryPoint: null,
         dependencies: [],
         suggestions: [],
         files: [],
+        techStack: [],
+        detectedFramework: null,
+        exposedPort: null,
+        runtimeHints: {}
     };
 
     try {
@@ -82,8 +87,22 @@ async function analyzeRepo(localPath) {
             result.hasPackageJson = true;
             result.language = "Node.js";
             result.startScript = pkgJson.scripts?.start || null;
-            result.entryPoint = pkgJson.main || "index.js"; // Default to index.js
+            result.entryPoint = pkgJson.main || "index.js";
             result.dependencies = Object.keys(pkgJson.dependencies || {});
+
+            // Detect framework
+            if (result.dependencies.includes("express")) {
+                result.detectedFramework = "Express.js";
+                result.exposedPort = 3000;
+            } else if (result.dependencies.includes("next")) {
+                result.detectedFramework = "Next.js";
+                result.exposedPort = 3000;
+            }
+
+            // Node version hint
+            if (pkgJson.engines?.node) {
+                result.runtimeHints.node = pkgJson.engines.node;
+            }
 
             if (!result.startScript) {
                 result.suggestions.push('Consider adding a "start" script to package.json.');
@@ -95,9 +114,25 @@ async function analyzeRepo(localPath) {
         // requirements.txt
         const reqsPath = path.join(localPath, "requirements.txt");
         try {
-            await fs.access(reqsPath);
+            const reqsContent = await fs.readFile(reqsPath, "utf-8");
             result.hasRequirementsTxt = true;
             if (!result.language) result.language = "Python";
+
+            // Detect framework
+            const lowerReqs = reqsContent.toLowerCase();
+            if (lowerReqs.includes("flask")) {
+                result.detectedFramework = "Flask";
+                result.exposedPort = 5000;
+            } else if (lowerReqs.includes("django")) {
+                result.detectedFramework = "Django";
+                result.exposedPort = 8000;
+            }
+
+            // Python version hint
+            const pyVerMatch = lowerReqs.match(/python[>=<]+([\d\.]+)/);
+            if (pyVerMatch) {
+                result.runtimeHints.python = pyVerMatch[1];
+            }
         } catch { }
 
         // Dockerfile
@@ -123,7 +158,6 @@ async function analyzeRepo(localPath) {
         if (!result.hasDockerfile) {
             result.suggestions.push("Consider adding a Dockerfile.");
         }
-
     } catch (error) {
         console.error("Error analyzing repository:", error);
         throw error;

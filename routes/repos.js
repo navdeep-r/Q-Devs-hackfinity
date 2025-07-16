@@ -1,13 +1,14 @@
 const express = require("express");
 const { cloneRepo } = require("../utils/clonerepo");
-const { analyzeRepo } = require("../utils/analyseREADME");
-const { preparePayload } = require("../utils/preparePayload");
+const { analyzeRepo } = require("../utils/analyserepo");
 const { callTogether } = require("../utils/callTogether");
+const { generateDockerfile } = require("../utils/generateDockerFile");
 const fs = require("fs").promises;
 const path = require("path");
 const { getRepoTree } = require("../utils/getRepoTree");
 
 const router = express.Router();
+
 const extToLang = {
     ".py": "Python",
     ".js": "JavaScript",
@@ -24,11 +25,10 @@ const extToLang = {
     ".sh": "Shell",
     ".html": "HTML",
     ".css": "CSS"
-    // Add more as needed
 };
 
-
-let security = true;
+// Any file extension considered code
+const codeExtensions = new Set(Object.keys(extToLang));
 
 async function checkEnvFiles(dir) {
     const ignoredDirs = new Set([
@@ -43,20 +43,20 @@ async function checkEnvFiles(dir) {
     ]);
 
     const entries = await fs.readdir(dir, { withFileTypes: true });
-
     for (const entry of entries) {
         if (ignoredDirs.has(entry.name)) continue;
-
         const fullPath = path.join(dir, entry.name);
 
         if (entry.isDirectory()) {
-            await checkEnvFiles(fullPath);
+            const found = await checkEnvFiles(fullPath);
+            if (found === false) return false;
         } else {
             if (entry.name.endsWith(".env")) {
-                security = false;
+                return false;
             }
         }
     }
+    return true;
 }
 
 router.post("/clone", async (req, res) => {
@@ -68,10 +68,10 @@ router.post("/clone", async (req, res) => {
         // Step 1: Clone
         const localPath = await cloneRepo(repoUrl);
 
-        // Step 2: Analyze files
+        // Step 2: Analyze
         const analysis = await analyzeRepo(localPath);
 
-        // Step 3: Read contents of ALL files you want
+        // Step 3: Read selected files
         const fileContents = {};
         for (const file of analysis.files) {
             const relPath = file.path;
@@ -84,7 +84,6 @@ router.post("/clone", async (req, res) => {
             }
         }
 
-        // Additionally, if it's a Node app and has an entry point:
         if (analysis.language === "Node.js" && analysis.entryPoint) {
             const entryPath = path.join(localPath, analysis.entryPoint);
             try {
@@ -95,18 +94,11 @@ router.post("/clone", async (req, res) => {
             }
         }
 
-        // Uncomment to see all collected file contents
-        // console.log("=== File Contents ===");
-        // console.log(fileContents);
-
-        // Step 4: Prepare single prompt
+        // Step 4: Prepare prompt
         const systemPrompt = `You are an expert software architect and documentation generator.
 Use the provided files to generate a clear, production-ready README.md in Markdown format.`;
 
         let userPrompt = `**Files and their contents:**\n\n`;
-        // console.log("=== FILE CONTENTS KEYS ===");
-        // console.log(Object.keys(fileContents));
-
         for (const [filePath, content] of Object.entries(fileContents)) {
             const safeContent = typeof content === "string" ? content.trim() : String(content);
             userPrompt += `### ${filePath}\n\n\`\`\`\n${safeContent}\n\`\`\`\n\n`;
@@ -114,7 +106,7 @@ Use the provided files to generate a clear, production-ready README.md in Markdo
 
         userPrompt += `\n\n# File Structure:\n\n${getRepoTree(localPath)}`;
 
-        userPrompt += `**Instructions:**\n
+        userPrompt += `**Instructions:**
 Based on the above files, produce a README.md with:
 - Title
 - Overview
@@ -131,30 +123,59 @@ Based on the above files, produce a README.md with:
 If any information is missing, insert minimal TODO notes.
 Return only the README.md in your response.`;
 
-        // Uncomment to inspect prompt
-        // console.log("=== System Prompt ===");
-        // console.log(systemPrompt);
-        // console.log("=== User Prompt ===");
-        // console.log(userPrompt);
-
         // Step 5: Call Together AI
         const readme = await callTogether(systemPrompt, userPrompt);
 
-        // Uncomment to inspect README
         console.log("=== Generated README ===");
         console.log(readme);
 
-        // Step 6: Respond
-        checkEnvFiles(localPath);
+        // Step 6: Check for .env
+        const security = await checkEnvFiles(localPath);
 
+        // Step 7: Conditionally write README.md
+        if (security && !analysis.hasReadme) {
+            const readmePath = path.join(localPath, "README.md");
+            await fs.writeFile(readmePath, readme, "utf-8");
+            console.log(`✅ README.md written to ${readmePath}`);
+        } else if (!security) {
+            console.log("⚠️ Skipping README write due to .env file detected.");
+        } else {
+            console.log("ℹ️ README.md already exists; skipping write.");
+        }
+
+        // Step 8: Determine whether to generate Dockerfile
+        const hasCode = analysis.techStack.some(([ext, count]) => codeExtensions.has(ext) && count > 0);
+
+        let dockerfileInfo = null;
+        if (
+            security &&
+            !analysis.hasDockerfile &&
+            hasCode &&
+            ["Node.js", "Python"].includes(analysis.language)
+        ) {
+            dockerfileInfo = await generateDockerfile(localPath, analysis);
+            console.log(`✅ Dockerfile generated at ${dockerfileInfo.dockerfilePath}`);
+        } else if (!security) {
+            console.log("⚠️ Skipping Dockerfile generation due to .env file detected.");
+        } else if (analysis.hasDockerfile) {
+            console.log("ℹ️ Dockerfile already exists; skipping generation.");
+        } else if (!hasCode) {
+            console.log("ℹ️ No code detected; skipping Dockerfile generation.");
+        } else {
+            console.log(`ℹ️ Generating Basic generation for language: ${analysis.language}`);
+            dockerfileInfo = await generateDockerfile(localPath, analysis);
+        }
+
+        // Step 9: Respond
         res.json({
-            message: "Repository processed and README generated successfully.",
+            message: "Repository processed and README/Dockerfile generated successfully.",
             localPath,
             analysis,
             fileContents,
             readme,
+            dockerFile: dockerfileInfo ? dockerfileInfo.dockerfileContent : null,
             dependancies: {
-                techStack: (analysis.techStack).map(([ext, count]) => [extToLang[ext], count]),
+                techStack: analysis.techStack.map(([ext, count]) => [extToLang[ext], count]),
                 security
             }
         });
