@@ -8,6 +8,56 @@ const path = require("path");
 const { getRepoTree } = require("../utils/getRepoTree");
 
 const router = express.Router();
+const extToLang = {
+    ".py": "Python",
+    ".js": "JavaScript",
+    ".ts": "TypeScript",
+    ".json": "JSON",
+    ".java": "Java",
+    ".c": "C",
+    ".cpp": "C++",
+    ".cs": "C#",
+    ".go": "Go",
+    ".rb": "Ruby",
+    ".php": "PHP",
+    ".rs": "Rust",
+    ".sh": "Shell",
+    ".html": "HTML",
+    ".css": "CSS"
+    // Add more as needed
+};
+
+
+let security = true;
+
+async function checkEnvFiles(dir) {
+    const ignoredDirs = new Set([
+        ".git",
+        "node_modules",
+        ".next",
+        ".cache",
+        "venv",
+        "__pycache__",
+        "dist",
+        "build"
+    ]);
+
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+
+    for (const entry of entries) {
+        if (ignoredDirs.has(entry.name)) continue;
+
+        const fullPath = path.join(dir, entry.name);
+
+        if (entry.isDirectory()) {
+            await checkEnvFiles(fullPath);
+        } else {
+            if (entry.name.endsWith(".env")) {
+                security = false;
+            }
+        }
+    }
+}
 
 router.post("/clone", async (req, res) => {
     const { repoUrl } = req.body;
@@ -95,13 +145,18 @@ Return only the README.md in your response.`;
         console.log(readme);
 
         // Step 6: Respond
+        checkEnvFiles(localPath);
+
         res.json({
             message: "Repository processed and README generated successfully.",
             localPath,
             analysis,
             fileContents,
             readme,
-            dependancies: {}
+            dependancies: {
+                techStack: (analysis.techStack).map(([ext, count]) => [extToLang[ext], count]),
+                security
+            }
         });
     } catch (err) {
         console.error("Error during cloning and analysis:", err);
