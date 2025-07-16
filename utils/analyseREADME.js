@@ -120,14 +120,52 @@ async function analyzeRepo(localPath) {
         dependencies: [],
         suggestions: [],
         files: [],
+        security: [], // Add security array
     };
 
     try {
         // Collect all files
         result.files = await walkDir(localPath, "", /^(package\.json|.*\.md)$/);
 
+        // --- Security Analysis ---
+        // Scan for API keys/secrets in code (not in .env files)
+        const sensitivePatterns = [
+            /API[_-]?KEY\s*[=:]\s*['\"][A-Za-z0-9\-_]{16,}/i,
+            /SECRET\s*[=:]\s*['\"][A-Za-z0-9\-_]{8,}/i,
+            /TOKEN\s*[=:]\s*['\"][A-Za-z0-9\-_]{16,}/i,
+            /ACCESS[_-]?KEY\s*[=:]\s*['\"][A-Za-z0-9\-_]{8,}/i,
+            /PRIVATE[_-]?KEY\s*[=:]\s*['\"][A-Za-z0-9\-_]{16,}/i,
+        ];
+        const ignoreFiles = [".env", ".env.example", "README.md", "LICENSE"];
+        let secretsExposed = false;
+        const allFiles = await fs.readdir(localPath, { recursive: true });
+        for (const file of allFiles) {
+            if (typeof file !== 'string') continue;
+            const ext = file.split('.').pop()?.toLowerCase();
+            if (ignoreFiles.some(f => file.endsWith(f))) continue;
+            // Only scan code/config files
+            if (["js","ts","py","json","yaml","yml","env","config","ini","php","rb","go","java","cs","cpp","c","swift","kt"].includes(ext)) {
+                try {
+                    const filePath = require('path').join(localPath, file);
+                    const content = await fs.readFile(filePath, "utf-8");
+                    for (const pattern of sensitivePatterns) {
+                        if (pattern.test(content)) {
+                            secretsExposed = true;
+                            result.security.push(`Potential secret/API key exposure in file: ${file}`);
+                            break;
+                        }
+                    }
+                } catch {}
+            }
+        }
+        if (!secretsExposed) {
+            result.security.push("No API keys or secrets found in code/config files. All sensitive keys should be stored securely in .env files only.");
+        }
+        // --- End Security Analysis ---
+
         // Check for package.json
         const pkgJsonPath = path.join(localPath, "package.json");
+        let foundDependencies = false;
         try {
             const pkgJsonContent = await fs.readFile(pkgJsonPath, "utf-8");
             const pkgJson = JSON.parse(pkgJsonContent);
@@ -136,6 +174,7 @@ async function analyzeRepo(localPath) {
             result.startScript = pkgJson.scripts?.start || null;
             result.entryPoint = pkgJson.main || "index.js"; // Default to index.js
             result.dependencies = Object.keys(pkgJson.dependencies || {});
+            foundDependencies = result.dependencies.length > 0;
 
             if (!result.startScript) {
                 result.suggestions.push('Consider adding a "start" script to package.json.');
@@ -147,10 +186,23 @@ async function analyzeRepo(localPath) {
         // requirements.txt (Python)
         const reqsPath = path.join(localPath, "requirements.txt");
         try {
-            await fs.access(reqsPath);
+            const reqsContent = await fs.readFile(reqsPath, "utf-8");
             result.hasRequirementsTxt = true;
             if (!result.language) result.language = "Python";
+            // Parse requirements.txt (ignore comments and blank lines)
+            const reqs = reqsContent.split(/\r?\n/)
+                .map(line => line.trim())
+                .filter(line => line && !line.startsWith('#'));
+            if (reqs.length > 0) {
+                result.dependencies = reqs;
+                foundDependencies = true;
+            }
         } catch { }
+
+        // If no dependencies found, add a default message
+        if (!foundDependencies) {
+            result.dependencies = ["No dependencies detected or language not supported for dependency analysis."];
+        }
 
         // Check for other language indicators
         if (!result.language) {

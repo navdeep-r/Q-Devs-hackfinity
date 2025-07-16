@@ -51,6 +51,7 @@ const ContainerizationTool = ()=>{
     const [runtime, setRuntime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [isAuthenticated, setIsAuthenticated] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [user, setUser] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
+    const [dependencies, setDependencies] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     //   const [logsContent, setLogsContent] = useState("");
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         checkAuthStatus();
@@ -96,7 +97,11 @@ const ContainerizationTool = ()=>{
                 setUser(data.user);
             }
         } catch (error) {
-            console.error("Auth status check failed:", error);
+            // Silently handle error to avoid console TypeError
+            setIsAuthenticated(false);
+            setUser(null);
+        // Optionally: show a user-friendly message
+        // console.error("Auth status check failed:", error);
         }
     };
     const handleUrlChange = (e)=>{
@@ -141,10 +146,11 @@ const ContainerizationTool = ()=>{
             setReadmeContent(data.readme || "");
             setLanguage(data.analysis?.language || "");
             setTechstack(data.analysis?.dependencies || []);
+            setDependencies(data.analysis?.dependencies || []);
             setDockerfileContent(data.dockerFile || "");
             setConfigContent(data.analysis?.config || "");
-            //   setLogsContent(data.analysis.logs || "");
-            alert("i");
+            //   setLogsContent(data.R.logs || "");
+            alert("DONE AND DUSTED!");
             //   setSecurity(data.dependencies.security || []);
             //   setDevelopement(data.dependencies.development || []);
             //   setRuntime(data.dependencies.runtime || []);
@@ -219,12 +225,12 @@ const ContainerizationTool = ()=>{
                                         className: "h-8 w-8 text-white"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 219,
+                                        lineNumber: 225,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 218,
+                                    lineNumber: 224,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
@@ -232,13 +238,13 @@ const ContainerizationTool = ()=>{
                                     children: "DockZen"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 221,
+                                    lineNumber: 227,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 217,
+                            lineNumber: 223,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -246,13 +252,13 @@ const ContainerizationTool = ()=>{
                             children: "Transform your GitHub repositories into production-ready containers with AI-powered analysis and README generation"
                         }, void 0, false, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 223,
+                            lineNumber: 229,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 216,
+                    lineNumber: 222,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -267,7 +273,7 @@ const ContainerizationTool = ()=>{
                                         children: "GitHub Authentication"
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 233,
+                                        lineNumber: 239,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -275,13 +281,13 @@ const ContainerizationTool = ()=>{
                                         children: isAuthenticated ? `Welcome, ${user?.displayName || user?.username || 'User'}!` : "Connect your GitHub account to access private repositories and enhanced features."
                                     }, void 0, false, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 234,
+                                        lineNumber: 240,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/app/tool/page.tsx",
-                                lineNumber: 232,
+                                lineNumber: 238,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -293,14 +299,14 @@ const ContainerizationTool = ()=>{
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 247,
+                                            lineNumber: 253,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Logout"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 243,
+                                    lineNumber: 249,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                     onClick: handleGitHubLogin,
@@ -310,30 +316,30 @@ const ContainerizationTool = ()=>{
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 255,
+                                            lineNumber: 261,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         "Login with GitHub"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 251,
+                                    lineNumber: 257,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0))
                             }, void 0, false, {
                                 fileName: "[project]/src/app/tool/page.tsx",
-                                lineNumber: 241,
+                                lineNumber: 247,
                                 columnNumber: 13
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/src/app/tool/page.tsx",
-                        lineNumber: 231,
+                        lineNumber: 237,
                         columnNumber: 11
                     }, ("TURBOPACK compile-time value", void 0))
                 }, void 0, false, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 230,
+                    lineNumber: 236,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -349,7 +355,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-blue-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 267,
+                                            lineNumber: 273,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -357,13 +363,13 @@ const ContainerizationTool = ()=>{
                                             children: "Smart Code Analysis"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 268,
+                                            lineNumber: 274,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 266,
+                                    lineNumber: 272,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -371,13 +377,13 @@ const ContainerizationTool = ()=>{
                                     children: "Deep dive into your codebase to understand structure, dependencies, and optimal containerization strategy"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 270,
+                                    lineNumber: 276,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 265,
+                            lineNumber: 271,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -390,7 +396,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-green-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 277,
+                                            lineNumber: 283,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -398,13 +404,13 @@ const ContainerizationTool = ()=>{
                                             children: "AI-Powered Documentation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 278,
+                                            lineNumber: 284,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 276,
+                                    lineNumber: 282,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -412,19 +418,19 @@ const ContainerizationTool = ()=>{
                                     children: "Generate comprehensive README files using LLM analysis, stored in database for future access"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 282,
+                                    lineNumber: 288,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 275,
+                            lineNumber: 281,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 264,
+                    lineNumber: 270,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -437,7 +443,7 @@ const ContainerizationTool = ()=>{
                                     className: "h-6 w-6 text-white"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 292,
+                                    lineNumber: 298,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -445,13 +451,13 @@ const ContainerizationTool = ()=>{
                                     children: "Repository Analysis"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 293,
+                                    lineNumber: 299,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 291,
+                            lineNumber: 297,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -464,7 +470,7 @@ const ContainerizationTool = ()=>{
                                             children: "GitHub Repository URL"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 297,
+                                            lineNumber: 303,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -478,7 +484,7 @@ const ContainerizationTool = ()=>{
                                                     className: `w-full px-4 py-3 bg-black border-2 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${!isValidUrl ? "border-red-500" : "border-gray-700"}`
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 301,
+                                                    lineNumber: 307,
                                                     columnNumber: 17
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 repoUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -487,24 +493,24 @@ const ContainerizationTool = ()=>{
                                                         className: "h-5 w-5 text-green-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                        lineNumber: 313,
+                                                        lineNumber: 319,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$circle$2d$alert$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__AlertCircle$3e$__["AlertCircle"], {
                                                         className: "h-5 w-5 text-red-400"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                        lineNumber: 315,
+                                                        lineNumber: 321,
                                                         columnNumber: 23
                                                     }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 311,
+                                                    lineNumber: 317,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 300,
+                                            lineNumber: 306,
                                             columnNumber: 15
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         !isValidUrl && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -512,13 +518,13 @@ const ContainerizationTool = ()=>{
                                             children: "Please enter a valid GitHub repository URL"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 321,
+                                            lineNumber: 327,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 296,
+                                    lineNumber: 302,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -532,37 +538,37 @@ const ContainerizationTool = ()=>{
                                                 className: "w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 333,
+                                                lineNumber: 339,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
                                                 className: "h-5 w-5"
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 335,
+                                                lineNumber: 341,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0)),
                                             isProcessing ? "Analyzing..." : "Start Analysis"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/src/app/tool/page.tsx",
-                                        lineNumber: 327,
+                                        lineNumber: 333,
                                         columnNumber: 15
                                     }, ("TURBOPACK compile-time value", void 0))
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 326,
+                                    lineNumber: 332,
                                     columnNumber: 13
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 295,
+                            lineNumber: 301,
                             columnNumber: 11
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 290,
+                    lineNumber: 296,
                     columnNumber: 9
                 }, ("TURBOPACK compile-time value", void 0)),
                 isProcessing && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -575,7 +581,7 @@ const ContainerizationTool = ()=>{
                                     className: "w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 347,
+                                    lineNumber: 353,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -583,13 +589,13 @@ const ContainerizationTool = ()=>{
                                     children: "Processing Repository..."
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 348,
+                                    lineNumber: 354,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 346,
+                            lineNumber: 352,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -601,19 +607,19 @@ const ContainerizationTool = ()=>{
                                             className: "h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 365,
+                                            lineNumber: 371,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)) : index === processingStep ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 367,
+                                            lineNumber: 373,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                             className: "h-4 w-4 rounded-full border-2 border-gray-600"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 369,
+                                            lineNumber: 375,
                                             columnNumber: 21
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -621,24 +627,24 @@ const ContainerizationTool = ()=>{
                                             children: step
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 371,
+                                            lineNumber: 377,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, index, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 354,
+                                    lineNumber: 360,
                                     columnNumber: 17
                                 }, ("TURBOPACK compile-time value", void 0)))
                         }, void 0, false, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 352,
+                            lineNumber: 358,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 345,
+                    lineNumber: 351,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0)),
                 showResults && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -654,7 +660,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-blue-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 384,
+                                            lineNumber: 390,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -662,13 +668,13 @@ const ContainerizationTool = ()=>{
                                             children: "Dockerfile Generation"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 385,
+                                            lineNumber: 391,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 383,
+                                    lineNumber: 389,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -682,7 +688,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Generated Dockerfile"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 389,
+                                                    lineNumber: 395,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -696,14 +702,14 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 397,
+                                                                    lineNumber: 403,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 393,
+                                                            lineNumber: 399,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -714,26 +720,26 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 406,
+                                                                    lineNumber: 412,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 400,
+                                                            lineNumber: 406,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 392,
+                                                    lineNumber: 398,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 388,
+                                            lineNumber: 394,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -742,24 +748,24 @@ const ContainerizationTool = ()=>{
                                                 children: dockerfileContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 412,
+                                                lineNumber: 418,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 411,
+                                            lineNumber: 417,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 387,
+                                    lineNumber: 393,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 382,
+                            lineNumber: 388,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -772,7 +778,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-green-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 420,
+                                            lineNumber: 426,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -780,13 +786,13 @@ const ContainerizationTool = ()=>{
                                             children: "Configuration Files"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 421,
+                                            lineNumber: 427,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 419,
+                                    lineNumber: 425,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -800,7 +806,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Container Configuration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 425,
+                                                    lineNumber: 431,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -814,14 +820,14 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 433,
+                                                                    lineNumber: 439,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 429,
+                                                            lineNumber: 435,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -832,26 +838,26 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 442,
+                                                                    lineNumber: 448,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 436,
+                                                            lineNumber: 442,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 428,
+                                                    lineNumber: 434,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 424,
+                                            lineNumber: 430,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -860,18 +866,18 @@ const ContainerizationTool = ()=>{
                                                 children: configContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 448,
+                                                lineNumber: 454,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 447,
+                                            lineNumber: 453,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 423,
+                                    lineNumber: 429,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -885,7 +891,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Port Configuration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 453,
+                                                    lineNumber: 459,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -893,7 +899,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Exposed: 3000"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 456,
+                                                    lineNumber: 462,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -901,13 +907,13 @@ const ContainerizationTool = ()=>{
                                                     children: "Protocol: HTTP"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 457,
+                                                    lineNumber: 463,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 452,
+                                            lineNumber: 458,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -918,7 +924,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Environment"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 460,
+                                                    lineNumber: 466,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -926,7 +932,7 @@ const ContainerizationTool = ()=>{
                                                     children: "NODE_ENV: production"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 463,
+                                                    lineNumber: 469,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -934,25 +940,25 @@ const ContainerizationTool = ()=>{
                                                     children: "PORT: 3000"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 464,
+                                                    lineNumber: 470,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 459,
+                                            lineNumber: 465,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 451,
+                                    lineNumber: 457,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 418,
+                            lineNumber: 424,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -965,7 +971,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-yellow-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 472,
+                                            lineNumber: 478,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -973,13 +979,13 @@ const ContainerizationTool = ()=>{
                                             children: "Dependency Analysis"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 473,
+                                            lineNumber: 479,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 471,
+                                    lineNumber: 477,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -993,7 +999,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Tech Stack Detected"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 477,
+                                                    lineNumber: 483,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1006,7 +1012,7 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4 text-yellow-400"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 483,
+                                                                    lineNumber: 489,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1017,13 +1023,13 @@ const ContainerizationTool = ()=>{
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 484,
+                                                                    lineNumber: 490,
                                                                     columnNumber: 25
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 482,
+                                                            lineNumber: 488,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         techStack.length > 0 ? techStack.map((tech, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1033,7 +1039,7 @@ const ContainerizationTool = ()=>{
                                                                         className: "h-4 w-4 text-yellow-400"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                                        lineNumber: 490,
+                                                                        lineNumber: 496,
                                                                         columnNumber: 27
                                                                     }, ("TURBOPACK compile-time value", void 0)),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1041,32 +1047,32 @@ const ContainerizationTool = ()=>{
                                                                         children: tech
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/app/tool/page.tsx",
-                                                                        lineNumber: 491,
+                                                                        lineNumber: 497,
                                                                         columnNumber: 27
                                                                     }, ("TURBOPACK compile-time value", void 0))
                                                                 ]
                                                             }, index, true, {
                                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                                lineNumber: 489,
+                                                                lineNumber: 495,
                                                                 columnNumber: 25
                                                             }, ("TURBOPACK compile-time value", void 0))) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "text-gray-500 text-sm",
-                                                            children: "No dependencies detected"
+                                                            children: "No tech stack detected"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 495,
+                                                            lineNumber: 501,
                                                             columnNumber: 23
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 480,
+                                                    lineNumber: 486,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 476,
+                                            lineNumber: 482,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1077,148 +1083,79 @@ const ContainerizationTool = ()=>{
                                                     children: "Security Analysis"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 500,
+                                                    lineNumber: 506,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                     className: "space-y-2",
-                                                    children: security.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    children: security.length > 0 ? security.map((item, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                                             className: "flex items-center gap-2",
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
                                                                     className: "h-4 w-4 text-green-400"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 506,
-                                                                    columnNumber: 25
+                                                                    lineNumber: 513,
+                                                                    columnNumber: 27
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                                                     className: "text-gray-300",
                                                                     children: item
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 507,
-                                                                    columnNumber: 25
+                                                                    lineNumber: 514,
+                                                                    columnNumber: 27
                                                                 }, ("TURBOPACK compile-time value", void 0))
                                                             ]
                                                         }, index, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 505,
-                                                            columnNumber: 23
-                                                        }, ("TURBOPACK compile-time value", void 0)))
+                                                            lineNumber: 512,
+                                                            columnNumber: 25
+                                                        }, ("TURBOPACK compile-time value", void 0))) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                        className: "flex items-center gap-2",
+                                                        children: [
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$shield$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Shield$3e$__["Shield"], {
+                                                                className: "h-4 w-4 text-green-400"
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/tool/page.tsx",
+                                                                lineNumber: 519,
+                                                                columnNumber: 25
+                                                            }, ("TURBOPACK compile-time value", void 0)),
+                                                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                                className: "text-gray-300",
+                                                                children: "No API keys or secrets found in code/config files. All sensitive keys are stored securely in .env files only."
+                                                            }, void 0, false, {
+                                                                fileName: "[project]/src/app/tool/page.tsx",
+                                                                lineNumber: 520,
+                                                                columnNumber: 25
+                                                            }, ("TURBOPACK compile-time value", void 0))
+                                                        ]
+                                                    }, void 0, true, {
+                                                        fileName: "[project]/src/app/tool/page.tsx",
+                                                        lineNumber: 518,
+                                                        columnNumber: 23
+                                                    }, ("TURBOPACK compile-time value", void 0))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 503,
+                                                    lineNumber: 509,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 499,
+                                            lineNumber: 505,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 475,
-                                    columnNumber: 15
-                                }, ("TURBOPACK compile-time value", void 0)),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "mt-6 bg-black p-4",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                            className: "text-lg font-semibold text-yellow-400 mb-3",
-                                            children: "Dependencies Overview"
-                                        }, void 0, false, {
-                                            fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 514,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0)),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "grid md:grid-cols-2 gap-4",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
-                                                            className: "font-medium text-blue-400 mb-2",
-                                                            children: "Runtime Dependencies"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 519,
-                                                            columnNumber: 21
-                                                        }, ("TURBOPACK compile-time value", void 0)),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                                            className: "text-gray-300 text-sm space-y-1",
-                                                            children: runtime.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                                                    children: [
-                                                                        "• ",
-                                                                        dep
-                                                                    ]
-                                                                }, index, true, {
-                                                                    fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 524,
-                                                                    columnNumber: 25
-                                                                }, ("TURBOPACK compile-time value", void 0)))
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 522,
-                                                            columnNumber: 21
-                                                        }, ("TURBOPACK compile-time value", void 0))
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 518,
-                                                    columnNumber: 19
-                                                }, ("TURBOPACK compile-time value", void 0)),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                                    children: [
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
-                                                            className: "font-medium text-green-400 mb-2",
-                                                            children: "Development Dependencies"
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 529,
-                                                            columnNumber: 21
-                                                        }, ("TURBOPACK compile-time value", void 0)),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
-                                                            className: "text-gray-300 text-sm space-y-1",
-                                                            children: development.map((dep, index)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("li", {
-                                                                    children: [
-                                                                        "• ",
-                                                                        dep
-                                                                    ]
-                                                                }, index, true, {
-                                                                    fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 534,
-                                                                    columnNumber: 25
-                                                                }, ("TURBOPACK compile-time value", void 0)))
-                                                        }, void 0, false, {
-                                                            fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 532,
-                                                            columnNumber: 21
-                                                        }, ("TURBOPACK compile-time value", void 0))
-                                                    ]
-                                                }, void 0, true, {
-                                                    fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 528,
-                                                    columnNumber: 19
-                                                }, ("TURBOPACK compile-time value", void 0))
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 517,
-                                            columnNumber: 17
-                                        }, ("TURBOPACK compile-time value", void 0))
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 513,
+                                    lineNumber: 481,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 470,
+                            lineNumber: 476,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1231,7 +1168,7 @@ const ContainerizationTool = ()=>{
                                             className: "h-6 w-6 text-purple-400"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 545,
+                                            lineNumber: 531,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
@@ -1239,7 +1176,7 @@ const ContainerizationTool = ()=>{
                                             children: "AI-Generated README"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 546,
+                                            lineNumber: 532,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         readmeContent && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1249,20 +1186,20 @@ const ContainerizationTool = ()=>{
                                                     className: "h-4 w-4"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 549,
+                                                    lineNumber: 535,
                                                     columnNumber: 21
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 "Stored in Database"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 548,
+                                            lineNumber: 534,
                                             columnNumber: 19
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 544,
+                                    lineNumber: 530,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1275,7 +1212,7 @@ const ContainerizationTool = ()=>{
                                                     className: "h-5 w-5 text-blue-400"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 557,
+                                                    lineNumber: 543,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1283,13 +1220,13 @@ const ContainerizationTool = ()=>{
                                                     children: "LLM Database Integration"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 558,
+                                                    lineNumber: 544,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 556,
+                                            lineNumber: 542,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1297,13 +1234,13 @@ const ContainerizationTool = ()=>{
                                             children: "README generated using advanced language models and automatically stored in our database for version control and future access."
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 562,
+                                            lineNumber: 548,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 555,
+                                    lineNumber: 541,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0)),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1317,7 +1254,7 @@ const ContainerizationTool = ()=>{
                                                     children: "Generated README.md"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 571,
+                                                    lineNumber: 557,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1331,14 +1268,14 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 577,
+                                                                    lineNumber: 563,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Copy"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 573,
+                                                            lineNumber: 559,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0)),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -1349,26 +1286,26 @@ const ContainerizationTool = ()=>{
                                                                     className: "h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                                    lineNumber: 584,
+                                                                    lineNumber: 570,
                                                                     columnNumber: 23
                                                                 }, ("TURBOPACK compile-time value", void 0)),
                                                                 "Download"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/app/tool/page.tsx",
-                                                            lineNumber: 580,
+                                                            lineNumber: 566,
                                                             columnNumber: 21
                                                         }, ("TURBOPACK compile-time value", void 0))
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/app/tool/page.tsx",
-                                                    lineNumber: 572,
+                                                    lineNumber: 558,
                                                     columnNumber: 19
                                                 }, ("TURBOPACK compile-time value", void 0))
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 570,
+                                            lineNumber: 556,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0)),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("pre", {
@@ -1377,24 +1314,24 @@ const ContainerizationTool = ()=>{
                                                 children: readmeContent
                                             }, void 0, false, {
                                                 fileName: "[project]/src/app/tool/page.tsx",
-                                                lineNumber: 590,
+                                                lineNumber: 576,
                                                 columnNumber: 19
                                             }, ("TURBOPACK compile-time value", void 0))
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/tool/page.tsx",
-                                            lineNumber: 589,
+                                            lineNumber: 575,
                                             columnNumber: 17
                                         }, ("TURBOPACK compile-time value", void 0))
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/tool/page.tsx",
-                                    lineNumber: 569,
+                                    lineNumber: 555,
                                     columnNumber: 15
                                 }, ("TURBOPACK compile-time value", void 0))
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 543,
+                            lineNumber: 529,
                             columnNumber: 13
                         }, ("TURBOPACK compile-time value", void 0)),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1402,24 +1339,24 @@ const ContainerizationTool = ()=>{
                             children: "Explore comprehensive analysis, database insights, and advanced configuration options"
                         }, void 0, false, {
                             fileName: "[project]/src/app/tool/page.tsx",
-                            lineNumber: 594,
+                            lineNumber: 580,
                             columnNumber: 15
                         }, ("TURBOPACK compile-time value", void 0))
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/tool/page.tsx",
-                    lineNumber: 380,
+                    lineNumber: 386,
                     columnNumber: 11
                 }, ("TURBOPACK compile-time value", void 0))
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/tool/page.tsx",
-            lineNumber: 214,
+            lineNumber: 220,
             columnNumber: 7
         }, ("TURBOPACK compile-time value", void 0))
     }, void 0, false, {
         fileName: "[project]/src/app/tool/page.tsx",
-        lineNumber: 213,
+        lineNumber: 219,
         columnNumber: 5
     }, ("TURBOPACK compile-time value", void 0));
 };

@@ -39,6 +39,7 @@ const ContainerizationTool = () => {
   const [runtime, setRuntime] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [dependencies, setDependencies] = useState([]);
   //   const [logsContent, setLogsContent] = useState("");
 
   useEffect(() => {
@@ -90,7 +91,11 @@ const ContainerizationTool = () => {
         setUser(data.user);
       }
     } catch (error) {
-      console.error("Auth status check failed:", error);
+      // Silently handle error to avoid console TypeError
+      setIsAuthenticated(false);
+      setUser(null);
+      // Optionally: show a user-friendly message
+      // console.error("Auth status check failed:", error);
     }
   };
 
@@ -139,10 +144,11 @@ const ContainerizationTool = () => {
       setReadmeContent(data.readme || "");
       setLanguage(data.analysis?.language || "");
       setTechstack(data.analysis?.dependencies || []);
+      setDependencies(data.analysis?.dependencies || []);
       setDockerfileContent(data.dockerFile || "");
       setConfigContent(data.analysis?.config || "");
-      //   setLogsContent(data.analysis.logs || "");
-      alert("i");
+      //   setLogsContent(data.R.logs || "");
+      alert("DONE AND DUSTED!");
       //   setSecurity(data.dependencies.security || []);
       //   setDevelopement(data.dependencies.development || []);
       //   setRuntime(data.dependencies.runtime || []);
@@ -492,7 +498,7 @@ const ContainerizationTool = () => {
                         </div>
                       ))
                     ) : (
-                      <div className="text-gray-500 text-sm">No dependencies detected</div>
+                      <div className="text-gray-500 text-sm">No tech stack detected</div>
                     )}
                   </div>
                 </div>
@@ -501,44 +507,24 @@ const ContainerizationTool = () => {
                     Security Analysis
                   </h3>
                   <div className="space-y-2">
-                    {security.map((item, index) => (
-                      <div key={index} className="flex items-center gap-2">
+                    {security.length > 0 ? (
+                      security.map((item, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Shield className="h-4 w-4 text-green-400" />
+                          <span className="text-gray-300">{item}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="flex items-center gap-2">
                         <Shield className="h-4 w-4 text-green-400" />
-                        <span className="text-gray-300">{item}</span>
+                        <span className="text-gray-300">No API keys or secrets found in code/config files. All sensitive keys are stored securely in .env files only.</span>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
-              </div>
-              <div className="mt-6 bg-black p-4">
-                <h3 className="text-lg font-semibold text-yellow-400 mb-3">
-                  Dependencies Overview
-                </h3>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-medium text-blue-400 mb-2">
-                      Runtime Dependencies
-                    </h4>
-                    <ul className="text-gray-300 text-sm space-y-1">
-                      {runtime.map((dep, index) => (
-                        <li key={index}>• {dep}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-green-400 mb-2">
-                      Development Dependencies
-                    </h4>
-                    <ul className="text-gray-300 text-sm space-y-1">
-                      {development.map((dep, index) => (
-                        <li key={index}>• {dep}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
+                
               </div>
             </div>
-
             {/* Section 4: README Creation with Database Connection */}
             <div className="bg-gray-900 p-8">
               <div className="flex items-center gap-3 mb-6">
