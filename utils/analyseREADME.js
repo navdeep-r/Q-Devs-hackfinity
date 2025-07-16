@@ -144,13 +144,76 @@ async function analyzeRepo(localPath) {
             // No package.json or invalid
         }
 
-        // requirements.txt
+        // requirements.txt (Python)
         const reqsPath = path.join(localPath, "requirements.txt");
         try {
             await fs.access(reqsPath);
             result.hasRequirementsTxt = true;
             if (!result.language) result.language = "Python";
         } catch { }
+
+        // Check for other language indicators
+        if (!result.language) {
+            // Check for Java
+            try {
+                const pomPath = path.join(localPath, "pom.xml");
+                await fs.access(pomPath);
+                result.language = "Java";
+            } catch {
+                try {
+                    const gradlePath = path.join(localPath, "build.gradle");
+                    await fs.access(gradlePath);
+                    result.language = "Java";
+                } catch { }
+            }
+        }
+
+        if (!result.language) {
+            // Check for C#
+            try {
+                const csprojPath = path.join(localPath, "*.csproj");
+                const csprojFiles = await fs.readdir(localPath);
+                if (csprojFiles.some(file => file.endsWith('.csproj'))) {
+                    result.language = "C#";
+                }
+            } catch { }
+        }
+
+        if (!result.language) {
+            // Check for Go
+            try {
+                const goModPath = path.join(localPath, "go.mod");
+                await fs.access(goModPath);
+                result.language = "Go";
+            } catch { }
+        }
+
+        if (!result.language) {
+            // Check for Rust
+            try {
+                const cargoPath = path.join(localPath, "Cargo.toml");
+                await fs.access(cargoPath);
+                result.language = "Rust";
+            } catch { }
+        }
+
+        if (!result.language) {
+            // Check for PHP
+            try {
+                const composerPath = path.join(localPath, "composer.json");
+                await fs.access(composerPath);
+                result.language = "PHP";
+            } catch { }
+        }
+
+        if (!result.language) {
+            // Check for Ruby
+            try {
+                const gemfilePath = path.join(localPath, "Gemfile");
+                await fs.access(gemfilePath);
+                result.language = "Ruby";
+            } catch { }
+        }
 
         // Dockerfile
         const dockerfilePath = path.join(localPath, "Dockerfile");
@@ -169,7 +232,53 @@ async function analyzeRepo(localPath) {
         }
 
         if (!result.language) {
-            result.language = "Unknown";
+            // Fallback: Check for common file extensions
+            try {
+                const allFiles = await fs.readdir(localPath, { recursive: true });
+                const fileExtensions = new Set();
+                
+                console.log("Files found in repository:", allFiles);
+                
+                for (const file of allFiles) {
+                    if (typeof file === 'string' && file.includes('.')) {
+                        const ext = file.split('.').pop()?.toLowerCase();
+                        if (ext) fileExtensions.add(ext);
+                    }
+                }
+
+                console.log("File extensions detected:", Array.from(fileExtensions));
+
+                // Language detection based on file extensions
+                if (fileExtensions.has('js') || fileExtensions.has('ts') || fileExtensions.has('jsx') || fileExtensions.has('tsx')) {
+                    result.language = "JavaScript/TypeScript";
+                } else if (fileExtensions.has('py')) {
+                    result.language = "Python";
+                } else if (fileExtensions.has('java')) {
+                    result.language = "Java";
+                } else if (fileExtensions.has('cs')) {
+                    result.language = "C#";
+                } else if (fileExtensions.has('go')) {
+                    result.language = "Go";
+                } else if (fileExtensions.has('rs')) {
+                    result.language = "Rust";
+                } else if (fileExtensions.has('php')) {
+                    result.language = "PHP";
+                } else if (fileExtensions.has('rb')) {
+                    result.language = "Ruby";
+                } else if (fileExtensions.has('html') || fileExtensions.has('css')) {
+                    result.language = "Web (HTML/CSS)";
+                } else if (fileExtensions.has('cpp') || fileExtensions.has('c')) {
+                    result.language = "C/C++";
+                } else if (fileExtensions.has('swift')) {
+                    result.language = "Swift";
+                } else if (fileExtensions.has('kt')) {
+                    result.language = "Kotlin";
+                } else {
+                    result.language = "Unknown";
+                }
+            } catch {
+                result.language = "Unknown";
+            }
         }
 
         if (!result.hasDockerfile) {

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Github,
   Container,
@@ -33,10 +33,17 @@ const ContainerizationTool = () => {
   const [configContent, setConfigContent] = useState("");
   const [readmeContent, setReadmeContent] = useState("");
   const [techStack, setTechstack] = useState([]);
+  const [language, setLanguage] = useState("");
   const [security, setSecurity] = useState([]);
   const [development, setDevelopement] = useState([]);
   const [runtime, setRuntime] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
   //   const [logsContent, setLogsContent] = useState("");
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
 
   const processingSteps = [
     "Cloning repository...",
@@ -53,6 +60,38 @@ const ContainerizationTool = () => {
   const validateGitHubUrl = (url: string) => {
     const githubRegex = /^https:\/\/github\.com\/[\w\-.]+\/[\w\-.]+\/?$/;
     return githubRegex.test(url);
+  };
+
+  const handleGitHubLogin = () => {
+    window.location.href = "http://localhost:5000/api/auth/github";
+  };
+
+  const handleLogout = async () => {
+    try {
+      await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+      setIsAuthenticated(false);
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/status", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setIsAuthenticated(data.isAuthenticated);
+        setUser(data.user);
+      }
+    } catch (error) {
+      console.error("Auth status check failed:", error);
+    }
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,13 +130,17 @@ const ContainerizationTool = () => {
       //   }
 
       const data = await response.json();
+      console.log("Full response data:", data);
+      console.log("Analysis data:", data.analysis);
+      console.log("Dependencies:", data.analysis?.dependencies);
       setProcessingStep(processingSteps.length - 1); // Complete
 
       // Store analysis results in state
       setReadmeContent(data.readme || "");
-      setTechstack(data.dependencies || []);
+      setLanguage(data.analysis?.language || "");
+      setTechstack(data.analysis?.dependencies || []);
       setDockerfileContent(data.dockerFile || "");
-      setConfigContent(data.analysis.config || "");
+      setConfigContent(data.analysis?.config || "");
       //   setLogsContent(data.analysis.logs || "");
       alert("i");
       //   setSecurity(data.dependencies.security || []);
@@ -182,6 +225,40 @@ const ContainerizationTool = () => {
             with AI-powered analysis and README generation
           </p>
         </header>
+
+        {/* Authentication Section */}
+        <div className="bg-gray-900 p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold mb-2">GitHub Authentication</h2>
+              <p className="text-gray-400">
+                {isAuthenticated 
+                  ? `Welcome, ${user?.displayName || user?.username || 'User'}!` 
+                  : "Connect your GitHub account to access private repositories and enhanced features."
+                }
+              </p>
+            </div>
+            <div>
+              {isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"
+                >
+                  <Github className="h-4 w-4" />
+                  Logout
+                </button>
+              ) : (
+                <button
+                  onClick={handleGitHubLogin}
+                  className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg flex items-center gap-2"
+                >
+                  <Github className="h-4 w-4" />
+                  Login with GitHub
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Key Features Grid */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -401,12 +478,22 @@ const ContainerizationTool = () => {
                     Tech Stack Detected
                   </h3>
                   <div className="space-y-2">
-                    {techStack.map((tech, index) => (
-                      <div key={index} className="flex items-center gap-2">
+                    {language && (
+                      <div className="flex items-center gap-2">
                         <Zap className="h-4 w-4 text-yellow-400" />
-                        <span className="text-gray-300">{tech}</span>
+                        <span className="text-gray-300 font-semibold">Language: {language}</span>
                       </div>
-                    ))}
+                    )}
+                    {techStack.length > 0 ? (
+                      techStack.map((tech, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Zap className="h-4 w-4 text-yellow-400" />
+                          <span className="text-gray-300">{tech}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-500 text-sm">No dependencies detected</div>
+                    )}
                   </div>
                 </div>
                 <div className="bg-black p-4">
@@ -504,36 +591,11 @@ const ContainerizationTool = () => {
                 </pre>
               </div>
             </div>
-
-            {/* Action Buttons */}
-            <div className="bg-gray-900 p-8">
-              <h2 className="text-2xl font-bold mb-6">Next Steps</h2>
-              <div className="grid md:grid-cols-2 gap-4 mb-6">
-                <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-3">
-                  <ExternalLink className="h-5 w-5" />
-                  Deploy to Cloud
-                </button>
-                <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-6 rounded-lg flex items-center justify-center gap-3">
-                  <Play className="h-5 w-5" />
-                  Test Locally
-                </button>
-              </div>
-
-              {/* Interactive Button to Details Page */}
-              <button
-                onClick={() => window.open("/details", "_blank")}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-lg flex items-center justify-center gap-3"
-              >
-                <Layers className="h-5 w-5" />
-                Dive into the Details
-                <ArrowRight className="h-5 w-5" />
-              </button>
               <p className="text-center text-gray-400 text-sm mt-2">
                 Explore comprehensive analysis, database insights, and advanced
                 configuration options
               </p>
             </div>
-          </div>
         )}
       </div>
     </div>
