@@ -54,8 +54,12 @@ router.post("/clone", async (req, res) => {
 Use the provided files to generate a clear, production-ready README.md in Markdown format.`;
 
         let userPrompt = `**Files and their contents:**\n\n`;
+        // console.log("=== FILE CONTENTS KEYS ===");
+        // console.log(Object.keys(fileContents));
+
         for (const [filePath, content] of Object.entries(fileContents)) {
-            userPrompt += `### ${filePath}\n\n\`\`\`\n${content.trim()}\n\`\`\`\n\n`;
+            const safeContent = typeof content === "string" ? content.trim() : String(content);
+            userPrompt += `### ${filePath}\n\n\`\`\`\n${safeContent}\n\`\`\`\n\n`;
         }
 
         userPrompt += `\n\n# File Structure:\n\n${getRepoTree(localPath)}`;
