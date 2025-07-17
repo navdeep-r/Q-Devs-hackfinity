@@ -1,6 +1,6 @@
 .env
 nil.txt
 node_modules/
-llm-containerizer-frontend/node_modules/
-llm-containerizer-frontend/.next/
+frontend/node_modules/
+frontend/.next/
 cloned_repos/

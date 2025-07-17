@@ -27,9 +27,10 @@ function preparePayload(repoPath, markdownFiles) {
         }
     }
 
-    combinedContent += `\n\n# File Structure:\n\n${getRepoTree(repoPath)}`;
+    const tree = getRepoTree(repoPath);
+    combinedContent += `\n\n# File Structure:\n\n${tree}`;
 
-    console.log(getRepoTree(repoPath))
+    console.log(tree)
 
     const systemPrompt = `You are an expert open-source documentation generator. Your job is to analyze the given Markdown files and produce a clean, complete, production-quality README.md file for the project.`;
 

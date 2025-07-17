@@ -1,4 +1,4 @@
-const { getRepoTree } = require('../utils/getRepoTree');
+const { getRepoTree } = require('./getRepoTree');
 
 function generatePrompts(fileContents, localPath) {
 
@@ -30,5 +30,5 @@ Based on the above files, produce a README.md with:
 If any information is missing, insert minimal TODO notes.
 Return only the README.md in your response.`;
 
-    return [systemPrompt, userPromptprompt]
+    return [systemPrompt, userPrompt]
 }
