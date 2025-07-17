@@ -6,58 +6,41 @@ const { generateDockerfile } = require("../utils/generateDockerFile");
 const fs = require("fs").promises;
 const path = require("path");
 const { getRepoTree } = require("../utils/getRepoTree");
-
+const extToLang = require('../assets/extToLang.json');
+const { systemPrompt, userPrompt } = require('../utils/generatePrompt')
 const router = express.Router();
-
-const extToLang = {
-    ".py": "Python",
-    ".js": "JavaScript",
-    ".ts": "TypeScript",
-    ".json": "JSON",
-    ".java": "Java",
-    ".c": "C",
-    ".cpp": "C++",
-    ".cs": "C#",
-    ".go": "Go",
-    ".rb": "Ruby",
-    ".php": "PHP",
-    ".rs": "Rust",
-    ".sh": "Shell",
-    ".html": "HTML",
-    ".css": "CSS"
-}
 
 // Any file extension considered code
 const codeExtensions = new Set(Object.keys(extToLang));
 
-async function checkEnvFiles(dir) {
-    const ignoredDirs = new Set([
-        ".git",
-        "node_modules",
-        ".next",
-        ".cache",
-        "venv",
-        "__pycache__",
-        "dist",
-        "build"
-    ]);
+// async function checkEnvFiles(dir) {
+//     const ignoredDirs = new Set([
+//         ".git",
+//         "node_modules",
+//         ".next",
+//         ".cache",
+//         "venv",
+//         "__pycache__",
+//         "dist",
+//         "build"
+//     ]);
 
-    const entries = await fs.readdir(dir, { withFileTypes: true });
-    for (const entry of entries) {
-        if (ignoredDirs.has(entry.name)) continue;
-        const fullPath = path.join(dir, entry.name);
+//     const entries = await fs.readdir(dir, { withFileTypes: true });
+//     for (const entry of entries) {
+//         if (ignoredDirs.has(entry.name)) continue;
+//         const fullPath = path.join(dir, entry.name);
 
-        if (entry.isDirectory()) {
-            const found = await checkEnvFiles(fullPath);
-            if (found === false) return false;
-        } else {
-            if (entry.name.endsWith(".env")) {
-                return false;
-            }
-        }
-    }
-    return true;
-}
+//         if (entry.isDirectory()) {
+//             const found = await checkEnvFiles(fullPath);
+//             if (found === false) return false;
+//         } else {
+//             if (entry.name.endsWith(".env")) {
+//                 return false;
+//             }
+//         }
+//     }
+//     return true;
+// }
 
 router.post("/clone", async (req, res) => {
     const { repoUrl } = req.body;
@@ -95,33 +78,7 @@ router.post("/clone", async (req, res) => {
         }
 
         // Step 4: Prepare prompt
-        const systemPrompt = `You are an expert software architect and documentation generator.
-Use the provided files to generate a clear, production-ready README.md in Markdown format.`;
 
-        let userPrompt = `**Files and their contents:**\n\n`;
-        for (const [filePath, content] of Object.entries(fileContents)) {
-            const safeContent = typeof content === "string" ? content.trim() : String(content);
-            userPrompt += `### ${filePath}\n\n\`\`\`\n${safeContent}\n\`\`\`\n\n`;
-        }
-
-        userPrompt += `\n\n# File Structure:\n\n${getRepoTree(localPath)}`;
-
-        userPrompt += `**Instructions:**
-Based on the above files, produce a README.md with:
-- Title
-- Overview
-- Installation
-- Usage
-- Development
-- Folder Layout
-- Testing
-- Docker (if applicable)
-- Configuration
-- Contributing
-- License
-
-If any information is missing, insert minimal TODO notes.
-Return only the README.md in your response.`;
 
         // Step 5: Call Together AI
         const readme = await callTogether(systemPrompt, userPrompt);
@@ -130,14 +87,14 @@ Return only the README.md in your response.`;
         console.log(readme);
 
         // Step 6: Check for .env
-        const security = await checkEnvFiles(localPath);
+        // const security = await checkEnvFiles(localPath);
 
         // Step 7: Conditionally write README.md
-        if (security && !analysis.hasReadme) {
+        if (analysis.security && !analysis.hasReadme) {
             const readmePath = path.join(localPath, "README.md");
             await fs.writeFile(readmePath, readme, "utf-8");
             console.log(`✅ README.md written to ${readmePath}`);
-        } else if (!security) {
+        } else if (analysis.security) {
             console.log("⚠️ Skipping README write due to .env file detected.");
         } else {
             console.log("ℹ️ README.md already exists; skipping write.");
@@ -146,16 +103,17 @@ Return only the README.md in your response.`;
         // Step 8: Determine whether to generate Dockerfile
         const hasCode = analysis.techStack.some(([ext, count]) => codeExtensions.has(ext) && count > 0);
 
+        // console.log(analysis)
         let dockerfileInfo = null;
         if (
-            security &&
+            analysis.security &&
             !analysis.hasDockerfile &&
             hasCode &&
             ["Node.js", "Python"].includes(analysis.language)
         ) {
             dockerfileInfo = await generateDockerfile(localPath, analysis);
             console.log(`✅ Dockerfile generated at ${dockerfileInfo.dockerfilePath}`);
-        } else if (!security) {
+        } else if (!analysis.security) {
             console.log("⚠️ Skipping Dockerfile generation due to .env file detected.");
         } else if (analysis.hasDockerfile) {
             console.log("ℹ️ Dockerfile already exists; skipping generation.");
@@ -176,7 +134,6 @@ Return only the README.md in your response.`;
             dockerFile: dockerfileInfo ? dockerfileInfo.dockerfileContent : null,
             dependancies: {
                 techStack: analysis.techStack.map(([ext, count]) => [extToLang[ext], count]),
-                security
             }
         });
     } catch (err) {
