@@ -10,7 +10,7 @@ function cloneRepo(repoUrl) {
         const CLONE_DIR = process.env.CLONE_DIR || 'cloned_repos';
 
         // Absolute path to the clone dir
-        const basePath = path.join(__dirname, '..', CLONE_DIR);
+        const basePath = path.join(__dirname, '../..', CLONE_DIR);
 
         // Make sure the directory exists
         if (!fs.existsSync(basePath)) {

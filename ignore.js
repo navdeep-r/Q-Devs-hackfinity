@@ -23,7 +23,7 @@ async function walkDir(dir, baseDir = "", pattern = null) {
     return results;
 }
 
-const outputFile = path.join(process.cwd(), 'output.gtxt');
+const outputFile = path.join(process.cwd(), 'scratch/output.gtxt');
 
 const contentArr = await walkDir(process.cwd());
 const content = contentArr.map(obj => obj.path).join('\n');
